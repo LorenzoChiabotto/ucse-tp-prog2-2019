@@ -207,7 +207,7 @@ namespace Logica
                     conte = reader.ReadToEnd();
                 }
 
-                listaHijo = JsonConvert.DeserializeObject<List<Hijo>>(conte).ToArray().Where(x=> x.Id;
+                listaHijo = JsonConvert.DeserializeObject<List<Hijo>>(conte).Where(x=> x.Id == idPadre).ToArray();
             }
             catch (Exception)
             {
