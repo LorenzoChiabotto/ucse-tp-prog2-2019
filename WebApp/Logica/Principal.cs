@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace Logica
 {
-    class Principal
+    public class Principal
     {
         private string path = "";
 
         private Usuario GetUsuario(int id)
         {
-            List<Directora> listaDirectoras = new List<Directora>();
 
             FileStream file;
             if (!File.Exists(path + "Usuarios.txt"))
@@ -58,7 +57,7 @@ namespace Logica
                     conte = reader.ReadToEnd();
                 }
 
-                return JsonConvert.DeserializeObject<List<Usuario>>(conte).ToList().Where(x => x.Id == id).FirstOrDefault();
+                return JsonConvert.DeserializeObject<List<Usuario>>(conte).ToList().Where(x => x.Id == usuaio.Id).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -66,7 +65,7 @@ namespace Logica
             }
         }
 
-        private List<Directora> GetDirectoras()
+        public List<Directora> GetDirectoras()
         {
             List<Directora> listaDirectoras;
 
@@ -144,6 +143,87 @@ namespace Logica
 
 
             return listaDocente;
+        }
+
+
+        private List<Padre> GetPadre()
+        {
+            List<Padre> listaPadre;
+
+            FileStream file;
+            if (!File.Exists(path + "Padres.txt"))
+            {
+                file = File.Create(path + "Padres.txt");
+                file.Close();
+            }
+
+            try
+            {
+                string conte;
+                using (StreamReader reader = new StreamReader(path + "Padres.txt"))
+                {
+                    conte = reader.ReadToEnd();
+                }
+
+                listaPadre = JsonConvert.DeserializeObject<List<Padre>>(conte).ToList();
+            }
+            catch (Exception)
+            {
+                listaPadre = new List<Padre>();
+                return listaPadre;
+            }
+
+            Usuario user;
+            foreach (Padre item in listaPadre)
+            {
+                user = GetUsuario(item.Id);
+                item.Nombre = user.Nombre;
+                item.Apellido = user.Apellido;
+                item.Email = user.Email;
+                item.Hijos = GetHijos(item.Id);
+            }
+
+            return listaPadre;
+        }
+
+
+        private Hijo[] GetHijos(int idPadre)
+        {
+            Hijo[] listaHijo;
+
+            FileStream file;
+            if (!File.Exists(path + "Hijos.txt"))
+            {
+                file = File.Create(path + "Hijos.txt");
+                file.Close();
+            }
+
+            try
+            {
+                string conte;
+                using (StreamReader reader = new StreamReader(path + "Hijos.txt"))
+                {
+                    conte = reader.ReadToEnd();
+                }
+
+                listaHijo = JsonConvert.DeserializeObject<List<Hijo>>(conte).ToArray().Where(x=> x.Id;
+            }
+            catch (Exception)
+            {
+                listaHijo = null;
+                return listaHijo;
+            }
+
+            Usuario user;
+            foreach (Hijo item in listaHijo)
+            {
+                user = GetUsuario(item.Id);
+                item.Nombre = user.Nombre;
+                item.Apellido = user.Apellido;
+                item.Email = user.Email;
+            }
+
+            return listaHijo;
         }
 
     }

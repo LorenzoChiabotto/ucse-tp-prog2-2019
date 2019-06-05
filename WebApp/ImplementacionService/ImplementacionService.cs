@@ -13,14 +13,6 @@ namespace ImplementacionService
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            List<Directora> listaDirectoras = GetDirectoras();
-
-            string output = JsonConvert.SerializeObject(listaDirectoras);
-            using (StreamWriter file = new System.IO.StreamWriter(path + "Directoras.txt", false))
-            {
-                file.Write(output);
-            }
-
             throw new NotImplementedException();
         }
         
