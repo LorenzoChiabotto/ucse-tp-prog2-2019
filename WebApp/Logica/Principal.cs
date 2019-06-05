@@ -12,6 +12,7 @@ namespace Logica
     public class Principal
     {
         private string path = "";
+        private string prueba = "";
 
         private Usuario GetUsuario(int id)
         {
