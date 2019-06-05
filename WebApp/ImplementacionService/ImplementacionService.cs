@@ -1,5 +1,4 @@
 ﻿using Contratos;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,35 +10,6 @@ namespace ImplementacionService
 {
     class ImplementacionService : IServicioWeb
     {
-        private string path = "";
-
-        private List<Directora> GetDirectoras()
-        {
-            List<Directora> listaDirectoras = new List<Directora>();
-
-            FileStream file;
-            if (!File.Exists(path + "Directoras.txt"))
-            {
-                file = File.Create(path + "Directoras.txt");
-                file.Close();
-            }
-
-            try
-            {
-                string conte;
-                using (StreamReader reader = new StreamReader(path + "Directoras.txt"))
-                {
-                    conte = reader.ReadToEnd();
-                }
-
-                return JsonConvert.DeserializeObject<List<Directora>>(conte)./*Where(x => x.Baja != true).*/ToList();
-            }
-            catch (Exception)
-            {
-                return new List<Directora>();
-            }
-        }
-
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
@@ -177,6 +147,41 @@ namespace ImplementacionService
         }
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Padre ObtenerPadrePorId(UsuarioLogueado usuarioLogueado, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Hijo ObtenerAlumnoPorId(UsuarioLogueado usuarioLogueado, int id)
         {
             throw new NotImplementedException();
         }
