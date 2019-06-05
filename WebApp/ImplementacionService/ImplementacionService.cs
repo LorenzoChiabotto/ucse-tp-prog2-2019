@@ -23,8 +23,7 @@ namespace ImplementacionService
 
             throw new NotImplementedException();
         }
-
-
+        
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
