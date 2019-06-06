@@ -39,6 +39,7 @@ namespace Logica
                 return new Usuario();
             }
         }
+
         private Usuario SaveUsuario(Usuario usuaio)
         {
             List<Directora> listaDirectoras = new List<Directora>();
@@ -146,7 +147,6 @@ namespace Logica
             return listaDocente;
         }
 
-
         private List<Padre> GetPadre()
         {
             List<Padre> listaPadre;
@@ -186,7 +186,6 @@ namespace Logica
 
             return listaPadre;
         }
-
 
         private Hijo[] GetHijos(int idPadre)
         {

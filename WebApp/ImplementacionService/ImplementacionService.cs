@@ -5,15 +5,41 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Logica;
 
 namespace ImplementacionService
 {
     class ImplementacionService : IServicioWeb
     {
+        Principal Principal;
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            List<Directora> listaDirectora = Principal.GetDirectoras();
+
+            foreach (var Lista in listaDirectora)
+            {
+                //SUPONGAMOS QUE LOS ERRORES SON ESTOS, HAY QUE VER BIEN
+                if (Lista.Nombre == directora.Nombre && Lista.Apellido == directora.Apellido && Lista.Email == directora.Email)
+                {
+                    Controlador.Errores.Add("Directora cargada anteriormente.");
+                }
+                if (usuarioLogueado.RolSeleccionado != Roles.Directora)
+                {
+                    Controlador.Errores.Add("Se selecciono mal el rol del usuario.");
+                }
+            }
+
+            if (Controlador.EsValido)
+            {
+                //Alta directora como esta en el mock
+                //Aca va un "Guardar Directora"
+            }
+
+            return Controlador;
+            //throw new NotImplementedException();
         }
         
 
