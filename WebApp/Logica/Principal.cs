@@ -120,31 +120,7 @@ namespace Logica
 
             List<DirectoraJson> listaDirectoras;
 
-            FileStream file;
-            if (!File.Exists(path + "Directoras.txt"))
-            {
-                file = File.Create(path + "Directoras.txt");
-                file.Close();
-            }
-
-            try
-            {
-                string conte;
-                using (StreamReader reader = new StreamReader(path + "Directoras.txt"))
-                {
-                    conte = reader.ReadToEnd();
-                }
-
-                listaDirectoras = JsonConvert.DeserializeObject<List<DirectoraJson>>(conte).ToList();
-                if(listaDirectoras == null)
-                {
-                    listaDirectoras = new List<DirectoraJson>();
-                }
-            }
-            catch (Exception)
-            {
-                listaDirectoras = new List<DirectoraJson>();
-            }
+            listaDirectoras = GetDirectorasJson();
 
             listaDirectoras.Add(new DirectoraJson()
             {
@@ -163,7 +139,65 @@ namespace Logica
 
             return Controlador;
         }
+        private List<DirectoraJson> GetDirectorasJson()
+        {
+            List<DirectoraJson> listaDirectoras;
+            FileStream file;
+            if (!File.Exists(path + "Directoras.txt"))
+            {
+                file = File.Create(path + "Directoras.txt");
+                file.Close();
+            }
 
+            try
+            {
+                string conte;
+                using (StreamReader reader = new StreamReader(path + "Directoras.txt"))
+                {
+                    conte = reader.ReadToEnd();
+                }
+
+                listaDirectoras = JsonConvert.DeserializeObject<List<DirectoraJson>>(conte).ToList();
+                if (listaDirectoras == null)
+                {
+                    listaDirectoras = new List<DirectoraJson>();
+                }
+            }
+            catch (Exception)
+            {
+                listaDirectoras = new List<DirectoraJson>();
+            }
+
+            return listaDirectoras;
+        }
+        public List<Directora> GetDirectoras()
+        {
+            List<UsuarioJson> users = GetUsersJson().Where(x=> x.Roles.Contains(Roles.Directora)).ToList();
+            if (users.Count == 0)
+            {
+                return new List<Directora>();
+            }
+
+            List<Directora> directoras = new List<Directora>();
+
+            List<DirectoraJson> directorasJson = GetDirectorasJson();
+
+            foreach (UsuarioJson item in users)
+            {
+                directoras.Add(new Directora()
+                {
+                    Id = item.Id,
+                    Apellido = item.Apellido,
+                    Nombre = item.Nombre,
+                    Email = item.Apellido,
+                    Cargo = directorasJson.Where(x => x.Id == item.Id).FirstOrDefault().Cargo,
+                    FechaIngreso = directorasJson.Where(x => x.Id == item.Id).FirstOrDefault().FechaIngreso,
+                    /*TODO INSTITUCION CUANDO SE ARME; BUSCAR EN ARCHIVO; CREAR OBJETO Y ASIGNARLO*/
+                }); 
+            }
+
+            return directoras;
+        }
         
     }
 }

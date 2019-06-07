@@ -116,7 +116,16 @@ namespace ImplementacionService
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            //TODO VER PERMISOS DE LOGUEADO
+            return new Grilla<Directora>()
+            {
+                Lista = Principal.Instance.GetDirectoras()
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = Principal.Instance.GetDirectoras().Count
+            };
+
+            //throw new NotImplementedException();
         }
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
@@ -181,7 +190,8 @@ namespace ImplementacionService
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            //TODO VER PERMISOS DE LOGUEADO
+            return Principal.Instance.GetDirectoras().Where(x => x.Id == id).FirstOrDefault();
         }
 
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
