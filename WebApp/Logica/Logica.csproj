@@ -46,8 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DirectoraJson.cs" />
+    <Compile Include="DocenteJson.cs" />
     <Compile Include="Principal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SalaJson.cs" />
     <Compile Include="UsuarioJson.cs" />
   </ItemGroup>
   <ItemGroup>

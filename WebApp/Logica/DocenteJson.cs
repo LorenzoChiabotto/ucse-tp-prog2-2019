@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Logica
 {
-    class DirectoraJson
+    public class DocenteJson
     {
         public int IdUser { get; set; }
-        public int Institucion { get; set; }
-        public string Cargo { get; set; }
-        public DateTime? FechaIngreso { get; set; }
+        public int[] idSalas { get; set; }
     }
 }
