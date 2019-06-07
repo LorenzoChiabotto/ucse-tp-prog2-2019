@@ -9,33 +9,24 @@ using Logica;
 
 namespace ImplementacionService
 {
-    class ImplementacionService : IServicioWeb
+    public class ImplementacionService : IServicioWeb
     {
-        Principal Principal;
-
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
 
-            List<Directora> listaDirectora = Principal.GetDirectoras();
-
-            foreach (var Lista in listaDirectora)
+            //El unico dato que define si son iguales es el email, ya que es el que deberia ser unico
+            // Ademas esto es mas optimo para validar
+            //La validacion de la existencia de la directora la hacemos en principal, porque requiere acceder al archivo y nos ahorramos acceder dos veces si funciona
+            if(usuarioLogueado.RolSeleccionado != Roles.Directora)
             {
-                //SUPONGAMOS QUE LOS ERRORES SON ESTOS, HAY QUE VER BIEN
-                if (Lista.Nombre == directora.Nombre && Lista.Apellido == directora.Apellido && Lista.Email == directora.Email)
-                {
-                    Controlador.Errores.Add("Directora cargada anteriormente.");
-                }
-                if (usuarioLogueado.RolSeleccionado != Roles.Directora)
-                {
-                    Controlador.Errores.Add("Se selecciono mal el rol del usuario.");
-                }
+                Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
+                return Controlador;
             }
 
             if (Controlador.EsValido)
             {
-                //Alta directora como esta en el mock
-                //Aca va un "Guardar Directora"
+                return Principal.Instance.AltaDirectora(directora);
             }
 
             return Controlador;
@@ -160,6 +151,11 @@ namespace ImplementacionService
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
+            
+            if(email != "" && clave != "")
+            {
+                //return Principal.Instance.LogIn(email, clave);
+            }
             throw new NotImplementedException();
         }
 

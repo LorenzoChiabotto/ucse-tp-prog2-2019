@@ -11,10 +11,44 @@ namespace Logica
 {
     public class Principal
     {
-        private string path = "";
-        private string prueba = "";
+        private string path = @"C:\Users\loren\Documents\UCSE\ucse-tp-prog2-2019\Archivos\";
 
-        private Usuario GetUsuario(int id)
+
+        //Singleton
+        private static Principal instance = null;
+        private Principal()
+        {
+
+        }
+        public static Principal Instance
+        {
+            get
+            {
+                if (instance == null){
+                    instance = new Principal();
+                }
+                return instance;
+            }
+        }
+        //
+
+        private int AltaUserJson(UsuarioJson user)
+        {
+            List<UsuarioJson> users = GetUsersJson();
+            
+            user.Id = users.Count > 0 ? users.Max(x => x.Id) + 1 : 1;
+            
+            users.Add(user);
+
+            string outputUsers = JsonConvert.SerializeObject(users);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
+            {
+                strWriter.Write(outputUsers);
+            }
+
+            return user.Id;
+        }
+        private List<UsuarioJson> GetUsersJson()
         {
 
             FileStream file;
@@ -32,44 +66,59 @@ namespace Logica
                     conte = reader.ReadToEnd();
                 }
 
-                return JsonConvert.DeserializeObject<List<Usuario>>(conte).ToList().Where(x => x.Id == id).FirstOrDefault();
+                return JsonConvert.DeserializeObject<List<UsuarioJson>>(conte).ToList();
             }
             catch (Exception)
             {
-                return new Usuario();
+                return new List<UsuarioJson>();
             }
         }
+        
 
-        private Usuario SaveUsuario(Usuario usuaio)
+        public Resultado AltaDirectora(Directora directora)
         {
-            List<Directora> listaDirectoras = new List<Directora>();
+            Resultado Controlador = new Resultado();
+            int Id;
 
-            FileStream file;
-            if (!File.Exists(path + "Usuarios.txt"))
+            List<UsuarioJson> users = GetUsersJson();
+            UsuarioJson user = users.Where(x => x.Email == directora.Email).FirstOrDefault();
+            if (user != null)
             {
-                file = File.Create(path + "Usuarios.txt");
-                file.Close();
-            }
-
-            try
-            {
-                string conte;
-                using (StreamReader reader = new StreamReader(path + "Usuarios.txt"))
+                if (user.Roles.Contains(Roles.Directora))
                 {
-                    conte = reader.ReadToEnd();
+                    Controlador.Errores.Add("Directora cargada anteriormente.");
+                    return Controlador;
                 }
-
-                return JsonConvert.DeserializeObject<List<Usuario>>(conte).ToList().Where(x => x.Id == usuaio.Id).FirstOrDefault();
+                else
+                {
+                    List<Roles> list = (user.Roles.ToList());
+                    list.Add(Roles.Directora);
+                    user.Roles = list.ToArray();
+                    
+                    Id = user.Id;
+                    string outputUsers = JsonConvert.SerializeObject(users);
+                    using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
+                    {
+                        strWriter.Write(outputUsers);
+                    }
+                }
+                directora.Id = user.Id;
             }
-            catch (Exception)
+            else
             {
-                return new Usuario();
-            }
-        }
+                Id = AltaUserJson(new UsuarioJson() {
+                    Apellido = directora.Apellido,
+                    Nombre = directora.Nombre,
+                    Email = directora.Email,
+                    Password = new Random().Next(0, 999999).ToString("D6"),
+                    Roles = new Roles[] { Roles.Directora }
+                });
 
-        public List<Directora> GetDirectoras()
-        {
-            List<Directora> listaDirectoras;
+                directora.Id = Id;
+            }
+
+
+            List<DirectoraJson> listaDirectoras;
 
             FileStream file;
             if (!File.Exists(path + "Directoras.txt"))
@@ -86,145 +135,35 @@ namespace Logica
                     conte = reader.ReadToEnd();
                 }
 
-                listaDirectoras = JsonConvert.DeserializeObject<List<Directora>>(conte).ToList();
-            }
-            catch (Exception)
-            {
-                listaDirectoras = new List<Directora>();
-                return listaDirectoras;
-            }
-
-            Usuario user;
-            foreach (Directora item in listaDirectoras)
-            {
-                user = GetUsuario(item.Id);
-                item.Nombre = user.Nombre;
-                item.Apellido = user.Apellido;
-                item.Email = user.Email;
-            }
-
-
-            return listaDirectoras;
-        }
-
-        private List<Docente> GetDocente()
-        {
-            List<Docente> listaDocente;
-
-            FileStream file;
-            if (!File.Exists(path + "Docentes.txt"))
-            {
-                file = File.Create(path + "Docentes.txt");
-                file.Close();
-            }
-
-            try
-            {
-                string conte;
-                using (StreamReader reader = new StreamReader(path + "Docentes.txt"))
+                listaDirectoras = JsonConvert.DeserializeObject<List<DirectoraJson>>(conte).ToList();
+                if(listaDirectoras == null)
                 {
-                    conte = reader.ReadToEnd();
+                    listaDirectoras = new List<DirectoraJson>();
                 }
-
-                listaDocente = JsonConvert.DeserializeObject<List<Docente>>(conte).ToList();
             }
             catch (Exception)
             {
-                listaDocente = new List<Docente>();
-                return listaDocente;
+                listaDirectoras = new List<DirectoraJson>();
             }
 
-            Usuario user;
-            foreach (Docente item in listaDocente)
+            listaDirectoras.Add(new DirectoraJson()
             {
-                user = GetUsuario(item.Id);
-                item.Nombre = user.Nombre;
-                item.Apellido = user.Apellido;
-                item.Email = user.Email;
+                Id = directora.Id,
+                Cargo = directora.Cargo,
+                FechaIngreso = directora.FechaIngreso,
+                //Institucion = directora.Institucion.Id,
+            });
+
+            string outputDirectoras = JsonConvert.SerializeObject(listaDirectoras);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Directoras.txt", false))
+            {
+                strWriter.Write(outputDirectoras);
             }
 
 
-            return listaDocente;
+            return Controlador;
         }
 
-        private List<Padre> GetPadre()
-        {
-            List<Padre> listaPadre;
-
-            FileStream file;
-            if (!File.Exists(path + "Padres.txt"))
-            {
-                file = File.Create(path + "Padres.txt");
-                file.Close();
-            }
-
-            try
-            {
-                string conte;
-                using (StreamReader reader = new StreamReader(path + "Padres.txt"))
-                {
-                    conte = reader.ReadToEnd();
-                }
-
-                listaPadre = JsonConvert.DeserializeObject<List<Padre>>(conte).ToList();
-            }
-            catch (Exception)
-            {
-                listaPadre = new List<Padre>();
-                return listaPadre;
-            }
-
-            Usuario user;
-            foreach (Padre item in listaPadre)
-            {
-                user = GetUsuario(item.Id);
-                item.Nombre = user.Nombre;
-                item.Apellido = user.Apellido;
-                item.Email = user.Email;
-                item.Hijos = GetHijos(item.Id);
-            }
-
-            return listaPadre;
-        }
-
-        private Hijo[] GetHijos(int idPadre)
-        {
-            Hijo[] listaHijo;
-
-            FileStream file;
-            if (!File.Exists(path + "Hijos.txt"))
-            {
-                file = File.Create(path + "Hijos.txt");
-                file.Close();
-            }
-
-            try
-            {
-                string conte;
-                using (StreamReader reader = new StreamReader(path + "Hijos.txt"))
-                {
-                    conte = reader.ReadToEnd();
-                }
-
-                listaHijo = JsonConvert.DeserializeObject<List<Hijo>>(conte).Where(x=> x.Id == idPadre).ToArray();
-            }
-            catch (Exception)
-            {
-                listaHijo = null;
-                return listaHijo;
-            }
-
-            Usuario user;
-            foreach (Hijo item in listaHijo)
-            {
-                user = GetUsuario(item.Id);
-                item.Nombre = user.Nombre;
-                item.Apellido = user.Apellido;
-                item.Email = user.Email;
-            }
-
-            return listaHijo;
-        }
-
+        
     }
 }
