@@ -311,6 +311,7 @@ namespace Logica
 
             foreach (UsuarioJson item in users)
             {
+                
                 docentes.Add(new Docente()
                 {
                     Id = item.Id,
@@ -384,7 +385,7 @@ namespace Logica
                 Nombre = sala.Nombre
             });
 
-            return Resultado;
+            return Controlador;
         }
     }
 

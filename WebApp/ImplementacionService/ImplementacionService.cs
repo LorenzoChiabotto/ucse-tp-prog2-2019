@@ -36,7 +36,23 @@ namespace ImplementacionService
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            //El unico dato que define si son iguales es el email, ya que es el que deberia ser unico
+            // Ademas esto es mas optimo para validar
+            //La validacion de la existencia de la directora la hacemos en principal, porque requiere acceder al archivo y nos ahorramos acceder dos veces si funciona
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora)
+            {
+                Controlador.Errores.Add("No tiene permisos para dar de alta un Docente");
+                return Controlador;
+            }
+
+            if (Controlador.EsValido)
+            {
+                return Principal.Instance.AltaDocente(docente);
+            }
+
+            return Controlador;
         }
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)
@@ -124,13 +140,18 @@ namespace ImplementacionService
                 .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
                 CantidadRegistros = Principal.Instance.GetDirectoras().Count
             };
-
-            //throw new NotImplementedException();
         }
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            //TODO VER PERMISOS DE LOGUEADO
+            return new Grilla<Docente>()
+            {
+                Lista = Principal.Instance.GetDocentes()
+               .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+               .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = Principal.Instance.GetDocentes().Count
+            };
         }
 
         public Institucion[] ObtenerInstituciones()
@@ -140,12 +161,18 @@ namespace ImplementacionService
 
         public string ObtenerNombreGrupo()
         {
-            throw new NotImplementedException();
+            return $"Musso Manuel - Spahn Andres - Chiabotto Lorenzo";
         }
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return new Grilla<Padre>()
+            {
+                /*Lista = _padres
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = _padres.Count*/
+            };
         }
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
