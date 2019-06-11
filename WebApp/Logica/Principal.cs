@@ -248,7 +248,7 @@ namespace Logica
             listaDocentes.Add(new DocenteJson()
             {
                 IdUser = docente.Id,
-                idSalas = docente.Salas != null? docente.Salas.Select(x => x.Id).ToArray() : null,
+                idSalas = docente.Salas != null? docente.Salas.Select(x => x.Id).ToArray() : new int[]{},
 
                 //Institucion = directora.Institucion.Id,
             });
@@ -261,7 +261,6 @@ namespace Logica
 
             return Controlador;
         }
-
         private List<DocenteJson> GetDocentesJson()
         {
             List<DocenteJson> listaDocentes;
@@ -280,11 +279,8 @@ namespace Logica
                     conte = reader.ReadToEnd();
                 }
 
-                listaDocentes = JsonConvert.DeserializeObject<List<DocenteJson>>(conte).ToList();
-                if (listaDocentes == null)
-                {
-                    listaDocentes = new List<DocenteJson>();
-                }
+                return JsonConvert.DeserializeObject<List<DocenteJson>>(conte).ToList();
+                
             }
             catch (Exception)
             {
@@ -295,7 +291,7 @@ namespace Logica
         }
         public List<Docente> GetDocentes()
         {
-            List<UsuarioJson> users = GetUsersJson().Where(x => x.Roles.Contains(Roles.Directora)).ToList();
+            List<UsuarioJson> users = GetUsersJson().Where(x => x.Roles.Contains(Roles.Docente)).ToList();
             if (users.Count == 0)
             {
                 return new List<Docente>();
