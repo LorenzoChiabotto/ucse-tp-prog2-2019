@@ -15,13 +15,31 @@ namespace ImplementacionService
         {
             Resultado Controlador = new Resultado();
 
-            //El unico dato que define si son iguales es el email, ya que es el que deberia ser unico
-            // Ademas esto es mas optimo para validar
-            //La validacion de la existencia de la directora la hacemos en principal, porque requiere acceder al archivo y nos ahorramos acceder dos veces si funciona
-            if(usuarioLogueado.RolSeleccionado != Roles.Directora)
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora)
             {
                 Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
                 return Controlador;
+            }
+
+            //Aca esta hecho medio rapido, si se puede hacer mas corto acepto sugerencias.
+            foreach (var Lista in Principal.Instance.GetDirectoras())
+            {
+                bool Bool = false;
+                if (Lista.Email == usuarioLogueado.Email)
+                {
+                    foreach (Roles Lroles in usuarioLogueado.Roles)
+                    {
+                        if (Lroles == Roles.Directora)
+                        {
+                            Bool = true;
+                        }
+                    }
+                }
+                if (!Bool)
+                {
+                    Controlador.Errores.Add("El usuario no fue dado de alta con el rol de Directora.");
+                    return Controlador;
+                }
             }
 
             if (Controlador.EsValido)
@@ -30,13 +48,25 @@ namespace ImplementacionService
             }
 
             return Controlador;
-            //throw new NotImplementedException();
         }
         
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado != Roles.Docente)
+            {
+                Controlador.Errores.Add("No tiene permisos para dar de alta a un Docente");
+                return Controlador;
+            }
+
+            if (Controlador.EsValido)
+            {
+                return Principal.Instance.AltaDocente(docente);
+            }
+
+            return Controlador;
         }
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)

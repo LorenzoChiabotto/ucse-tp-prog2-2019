@@ -11,7 +11,7 @@ namespace Logica
 {
     public class Principal
     {
-        private string path = @"C:\Users\loren\Documents\UCSE\ucse-tp-prog2-2019\Archivos\";
+        private string path = @"C:\Users\Usuario\Desktop\Nueva carpeta\";
 
 
         //Singleton
@@ -200,9 +200,6 @@ namespace Logica
             return directoras;
         }
 
-
-
-
         public Resultado AltaDocente(Docente docente)
         {
             Resultado Controlador = new Resultado();
@@ -246,7 +243,6 @@ namespace Logica
                 docente.Id = Id;
             }
 
-
             List<DocenteJson> listaDocentes = GetDocentesJson();
 
             listaDocentes.Add(new DocenteJson()
@@ -265,6 +261,7 @@ namespace Logica
 
             return Controlador;
         }
+
         private List<DocenteJson> GetDocentesJson()
         {
             List<DocenteJson> listaDocentes;
@@ -384,7 +381,7 @@ namespace Logica
                 Nombre = sala.Nombre
             });
 
-            return Resultado;
+            return Controlador;
         }
     }
 
