@@ -11,7 +11,7 @@ namespace Logica
 {
     public class Principal
     {
-        private string path = @"C:\Users\Usuario\Desktop\Nueva carpeta\";
+        private string path = @"C:\Users\loren\Documents\UCSE\ucse-tp-prog2-2019\Archivos\";
 
 
         //Singleton
@@ -248,7 +248,7 @@ namespace Logica
             listaDocentes.Add(new DocenteJson()
             {
                 IdUser = docente.Id,
-                idSalas = docente.Salas.Select(x => x.Id).ToArray(),
+                idSalas = docente.Salas != null? docente.Salas.Select(x => x.Id).ToArray() : null,
 
                 //Institucion = directora.Institucion.Id,
             });
