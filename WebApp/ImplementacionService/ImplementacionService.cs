@@ -121,7 +121,7 @@ namespace ImplementacionService
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            
         }
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
@@ -135,6 +135,7 @@ namespace ImplementacionService
                 {
 
                 }
+            return Controlador;
         }
 
         public Resultado EditarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)

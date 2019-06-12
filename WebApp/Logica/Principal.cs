@@ -11,7 +11,7 @@ namespace Logica
 {
     public class Principal
     {
-        //IQUERYABLE<Tipo> query = lista.where
+        //IQUERYABLE<Tipo> query = lista.where().AsQueryable();
 
         /*Path.Combine(Appdomain.CurrentDomain.BaseDirectory,"Archivo.txt"); */
         private string path = $"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"")}";
@@ -268,45 +268,27 @@ namespace Logica
 
         public Resultado  ModificarDocente(int id, Docente docente)
         {
-            Resultado Controlador = new Resultado();
-            /*Si bandera== True el docente tiene permisos para modificación
-            if (band)
+            //TODO Modificar Autousuario y Pasword
+
+            List<UsuarioJson> listaDocentes = GetUsersJson();
+            UsuarioJson usuarioDocente = listaDocentes.Where(x => x.Id == id).FirstOrDefault();
+            if (usuarioDocente == null)
             {
-                Llamada Metodos modificación
+              // Agregar excepción null  return new Resultado{ }();
             }
-            */
+            else
+            {
+                usuarioDocente.Nombre = docente.Nombre;
+                usuarioDocente.Apellido = docente.Apellido;
+                usuarioDocente.Email = docente.Email;
+            }
+
+            
+            listaDocentes.RemoveAt(listaDocentes.IndexOf(usuarioDocente));
+
             return Controlador;
         }
 
-        public Resultado BajaDocente(Docente docente)
-        {
-            Resultado Controlador = new Resultado();
-            bool band;
-            List<UsuarioJson> users = GetUsersJson();
-            UsuarioJson user = users.Where(x => x.Id == docente.Id).FirstOrDefault();
-            if (users != null)
-            {
-                if (user.Roles.Contains(Roles.Docente))
-                {
-                    //Tiene los roles correspondientes y tiene permisos de modificar activo Bandera
-                    band = true;
-                }
-                else
-                {
-                    //Usuario sin roles Especificados
-                    band = false;
-                }
-            }
-            /*Si bandera== True el docente tiene permisos para eliminaci
-            if (band)
-            {
-                Metodos Eliminación
-
-            }
-            */
-            return Controlador;
-
-        }
 
 
         private List<DocenteJson> GetDocentesJson()
