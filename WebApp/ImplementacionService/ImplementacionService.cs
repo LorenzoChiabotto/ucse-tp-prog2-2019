@@ -1,11 +1,7 @@
 ﻿using Contratos;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Logica;
+using System;
+using System.Linq;
 
 namespace ImplementacionService
 {
@@ -14,13 +10,13 @@ namespace ImplementacionService
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
-            string Error = ErrorRol(usuarioLogueado);
+            string Error = ErrorRol(usuarioLogueado, Roles.Directora);
 
-            if(usuarioLogueado.RolSeleccionado != Roles.Directora)
-            {
-                Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
-                return Controlador;
-            }
+            //if (usuarioLogueado.RolSeleccionado != Roles.Directora)
+            //{
+            //    Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
+            //    return Controlador;
+            //}
 
             if (Error != "")
             {
@@ -34,16 +30,41 @@ namespace ImplementacionService
 
             return Controlador;
         }
-        
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
+            string Error = ErrorRol(usuarioLogueado, Roles.Docente);
 
             if (usuarioLogueado.RolSeleccionado != Roles.Directora)
             {
-                Controlador.Errores.Add("No tiene permisos para dar de alta un Docente");
+                Controlador.Errores.Add("No tiene permisos para dar de alta a un Docente.");
                 return Controlador;
+            }
+
+            //ErrorSalaYaAsignada
+            //bool Bool = false;
+            //foreach (Sala Salas in Principal.Instance.GetSalas())
+            //{
+            //    foreach (Sala SalaDocente in docente.Salas)
+            //    {
+            //        if (Salas.Id == SalaDocente.Id)
+            //        {
+            //            if (Salas.Nombre != docente.Nombre)
+            //            {
+            //                Bool = true;
+            //            }
+            //        }
+            //    }
+            //}
+            //if (Bool)
+            //{
+            //    Controlador.Errores.Add("Sala seleccionada tiene a otro Docente asignado.");
+            //}
+
+            if (Error != "")
+            {
+                Controlador.Errores.Add(Error);
             }
 
             if (Controlador.EsValido)
@@ -56,6 +77,20 @@ namespace ImplementacionService
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)
         {
+            //Resultado Controlador = new Resultado();
+
+            //if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
+            //{
+            //    Controlador.Errores.Add("No tiene permisos para dar de alta una Nota");
+            //    return Controlador;
+            //}
+
+            //if (Controlador.EsValido)
+            //{
+            //    return Principal.Instance.AltaNota(nota);
+            //}
+
+            //return Controlador;
             throw new NotImplementedException();
         }
 
@@ -194,8 +229,8 @@ namespace ImplementacionService
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
-            
-            if(email != "" && clave != "")
+
+            if (email != "" && clave != "")
             {
                 //return Principal.Instance.LogIn(email, clave);
             }
@@ -243,25 +278,19 @@ namespace ImplementacionService
             throw new NotImplementedException();
         }
 
-        private string ErrorRol(UsuarioLogueado usuarioLogueado)
+        private string ErrorRol(UsuarioLogueado usuarioLogueado, Roles Rol)
         {
-            foreach (var Lista in Principal.Instance.GetDirectoras())
+            bool Bool = false;
+            foreach (Roles Lroles in usuarioLogueado.Roles)
             {
-                bool Bool = false;
-                if (Lista.Email == usuarioLogueado.Email)
+                if (Lroles == Rol)
                 {
-                    foreach (Roles Lroles in usuarioLogueado.Roles)
-                    {
-                        if (Lroles == Roles.Directora)
-                        {
-                            Bool = true;
-                        }
-                    }
-                    if (!Bool)
-                    {
-                        return "El usuario no fue dado de alta con el rol de {usuarioLogueado.RolSeleccionado}.";
-                    }
+                    Bool = true;
                 }
+            }
+            if (!Bool)
+            {
+                return $"El usuario no fue dado de alta con el rol de {usuarioLogueado.RolSeleccionado}.";
             }
             return "";
         }
