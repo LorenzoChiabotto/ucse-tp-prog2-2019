@@ -14,14 +14,17 @@ namespace ImplementacionService
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
+            string Error = ErrorRol(usuarioLogueado);
 
-            //El unico dato que define si son iguales es el email, ya que es el que deberia ser unico
-            // Ademas esto es mas optimo para validar
-            //La validacion de la existencia de la directora la hacemos en principal, porque requiere acceder al archivo y nos ahorramos acceder dos veces si funciona
             if(usuarioLogueado.RolSeleccionado != Roles.Directora)
             {
                 Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
                 return Controlador;
+            }
+
+            if (Error != "")
+            {
+                Controlador.Errores.Add(Error);
             }
 
             if (Controlador.EsValido)
@@ -30,7 +33,6 @@ namespace ImplementacionService
             }
 
             return Controlador;
-            //throw new NotImplementedException();
         }
         
 
@@ -38,9 +40,6 @@ namespace ImplementacionService
         {
             Resultado Controlador = new Resultado();
 
-            //El unico dato que define si son iguales es el email, ya que es el que deberia ser unico
-            // Ademas esto es mas optimo para validar
-            //La validacion de la existencia de la directora la hacemos en principal, porque requiere acceder al archivo y nos ahorramos acceder dos veces si funciona
             if (usuarioLogueado.RolSeleccionado != Roles.Directora)
             {
                 Controlador.Errores.Add("No tiene permisos para dar de alta un Docente");
@@ -234,6 +233,29 @@ namespace ImplementacionService
         public Hijo ObtenerAlumnoPorId(UsuarioLogueado usuarioLogueado, int id)
         {
             throw new NotImplementedException();
+        }
+
+        private string ErrorRol(UsuarioLogueado usuarioLogueado)
+        {
+            foreach (var Lista in Principal.Instance.GetDirectoras())
+            {
+                bool Bool = false;
+                if (Lista.Email == usuarioLogueado.Email)
+                {
+                    foreach (Roles Lroles in usuarioLogueado.Roles)
+                    {
+                        if (Lroles == Roles.Directora)
+                        {
+                            Bool = true;
+                        }
+                    }
+                    if (!Bool)
+                    {
+                        return "El usuario no fue dado de alta con el rol de {usuarioLogueado.RolSeleccionado}.";
+                    }
+                }
+            }
+            return "";
         }
     }
 }
