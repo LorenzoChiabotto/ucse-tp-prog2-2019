@@ -91,7 +91,15 @@ namespace ImplementacionService
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+                if (usuarioLogueado.Roles.Contains(Roles.Directora))
+                {
+                    Controlador = Principal.Instance.ModificarDocente(id, docente);
+                }
+                else
+                {
+
+                }
         }
 
         public Resultado EditarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)

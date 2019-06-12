@@ -11,9 +11,12 @@ namespace Logica
 {
     public class Principal
     {
-        private string path = @"C:\Users\loren\Documents\UCSE\ucse-tp-prog2-2019\Archivos\";
+        //IQUERYABLE<Tipo> query = lista.where
 
-
+        /*Path.Combine(Appdomain.CurrentDomain.BaseDirectory,"Archivo.txt"); */
+        private string path = $"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"")}";
+        
+        
         //Singleton
         private static Principal instance = null;
         private Principal()
@@ -31,7 +34,7 @@ namespace Logica
                 return instance;
             }
         }
-        //
+        
 
         private int GuardarUserJson(UsuarioJson user)
         {
@@ -140,6 +143,7 @@ namespace Logica
 
             return Controlador;
         }
+        
         private List<DirectoraJson> GetDirectorasJson()
         {
             List<DirectoraJson> listaDirectoras;
@@ -261,6 +265,50 @@ namespace Logica
 
             return Controlador;
         }
+
+        public Resultado  ModificarDocente(int id, Docente docente)
+        {
+            Resultado Controlador = new Resultado();
+            /*Si bandera== True el docente tiene permisos para modificación
+            if (band)
+            {
+                Llamada Metodos modificación
+            }
+            */
+            return Controlador;
+        }
+
+        public Resultado BajaDocente(Docente docente)
+        {
+            Resultado Controlador = new Resultado();
+            bool band;
+            List<UsuarioJson> users = GetUsersJson();
+            UsuarioJson user = users.Where(x => x.Id == docente.Id).FirstOrDefault();
+            if (users != null)
+            {
+                if (user.Roles.Contains(Roles.Docente))
+                {
+                    //Tiene los roles correspondientes y tiene permisos de modificar activo Bandera
+                    band = true;
+                }
+                else
+                {
+                    //Usuario sin roles Especificados
+                    band = false;
+                }
+            }
+            /*Si bandera== True el docente tiene permisos para eliminaci
+            if (band)
+            {
+                Metodos Eliminación
+
+            }
+            */
+            return Controlador;
+
+        }
+
+
         private List<DocenteJson> GetDocentesJson()
         {
             List<DocenteJson> listaDocentes;
@@ -380,6 +428,8 @@ namespace Logica
 
             return Controlador;
         }
+        
+
     }
 
 
