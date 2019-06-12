@@ -77,6 +77,20 @@ namespace ImplementacionService
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)
         {
+            //Resultado Controlador = new Resultado();
+
+            //if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
+            //{
+            //    Controlador.Errores.Add("No tiene permisos para dar de alta una Nota");
+            //    return Controlador;
+            //}
+
+            //if (Controlador.EsValido)
+            //{
+            //    return Principal.Instance.AltaNota(nota);
+            //}
+
+            //return Controlador;
             throw new NotImplementedException();
         }
 
@@ -268,7 +282,7 @@ namespace ImplementacionService
             }
             if (!Bool)
             {
-                return "El usuario no fue dado de alta con el rol de {usuarioLogueado.RolSeleccionado}.";
+                return $"El usuario no fue dado de alta con el rol de {usuarioLogueado.RolSeleccionado}.";
             }
             return "";
         }
