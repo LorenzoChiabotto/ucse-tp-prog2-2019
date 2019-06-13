@@ -268,6 +268,8 @@ namespace Logica
 
         public Resultado  ModificarDocente(int id, Docente docente)
         {
+            Resultado Controlador = new Resultado();
+
             //TODO Modificar Autousuario y Pasword
 
             List<UsuarioJson> listaDocentes = GetUsersJson();

@@ -121,7 +121,7 @@ namespace ImplementacionService
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            
+            throw new NotImplementedException();
         }
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
@@ -230,11 +230,18 @@ namespace ImplementacionService
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
+            //if (email == "" || clave == "")
+            //    return null;
 
-            if (email != "" && clave != "")
-            {
-                //return Principal.Instance.LogIn(email, clave);
-            }
+            //foreach (var usuarioJson in Principal.Instance.GetUsersJson())
+            //{
+            //    if (email == usuarioJson.Email && clave == usuarioJson.Password)
+            //    {
+            //        return new UsuarioLogueado() { Email = usuarioJson.Email, Nombre = usuarioJson.Nombre, Apellido = usuarioJson.Apellido };
+            //    }
+            //}
+
+            //return null;
             throw new NotImplementedException();
         }
 

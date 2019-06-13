@@ -15,7 +15,7 @@ namespace AnBem.WebApplication.Controllers
 {
     public class CuadernoController : BaseController
     {
-        private static IServicioWeb servicio = new MockService();
+        private static IServicioWeb servicio = new ImplementacionService.ImplementacionService();
 
         [HttpGet]
         public async Task<ActionResult> Index(int? classroomId = null, int? studenId = null)
