@@ -1,0 +1,1 @@
+[{"IdUser":1,"idSalas":[]},{"IdUser":3,"idSalas":[]}]

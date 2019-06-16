@@ -1,0 +1,1 @@
+[{"Id":1,"Nombre":"Sala 1"},{"Id":2,"Nombre":"Sala 2"},{"Id":3,"Nombre":"Sala 3"},{"Id":4,"Nombre":"Sala 4"}]

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Logica
 {
-    class SalaJson
+    class PadreJson
     {
-        public int Id { get; set; }
-        public string Nombre { get; set; }
+        public int IdUser { get; set; }
+        public int[] idHijos { get; set; }
     }
 }

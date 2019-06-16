@@ -7,34 +7,29 @@ namespace ImplementacionService
 {
     public class ImplementacionService : IServicioWeb
     {
+        public ImplementacionService()
+        {
+            Principal.Instance.CrearSalas();
+        }
+
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
-            string Error = ErrorRol(usuarioLogueado, Roles.Directora);
-
-            //if (usuarioLogueado.RolSeleccionado != Roles.Directora)
-            //{
-            //    Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
-            //    return Controlador;
-            //}
-
-            if (Error != "")
+            
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora)
             {
-                Controlador.Errores.Add(Error);
+                Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
+                return Controlador;
             }
-
-            if (Controlador.EsValido)
-            {
-                return Principal.Instance.AltaDirectora(directora);
-            }
-
-            return Controlador;
+            
+            return Principal.Instance.AltaDirectora(directora);
+            
         }
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
-            string Error = ErrorRol(usuarioLogueado, Roles.Docente);
+            //string Error = ErrorRol(usuarioLogueado, Roles.Docente);
 
             if (usuarioLogueado.RolSeleccionado != Roles.Directora)
             {
@@ -42,61 +37,26 @@ namespace ImplementacionService
                 return Controlador;
             }
 
-            //ErrorSalaYaAsignada
-            //bool Bool = false;
-            //foreach (Sala Salas in Principal.Instance.GetSalas())
-            //{
-            //    foreach (Sala SalaDocente in docente.Salas)
-            //    {
-            //        if (Salas.Id == SalaDocente.Id)
-            //        {
-            //            if (Salas.Nombre != docente.Nombre)
-            //            {
-            //                Bool = true;
-            //            }
-            //        }
-            //    }
-            //}
-            //if (Bool)
-            //{
-            //    Controlador.Errores.Add("Sala seleccionada tiene a otro Docente asignado.");
-            //}
-
-            if (Error != "")
-            {
-                Controlador.Errores.Add(Error);
-            }
-
-            if (Controlador.EsValido)
-            {
-                return Principal.Instance.AltaDocente(docente);
-            }
-
-            return Controlador;
+            return Principal.Instance.AltaDocente(docente);
+            
         }
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)
         {
-            //Resultado Controlador = new Resultado();
-
-            //if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
-            //{
-            //    Controlador.Errores.Add("No tiene permisos para dar de alta una Nota");
-            //    return Controlador;
-            //}
-
-            //if (Controlador.EsValido)
-            //{
-            //    return Principal.Instance.AltaNota(nota);
-            //}
-
-            //return Controlador;
             throw new NotImplementedException();
         }
 
         public Resultado AltaPadreMadre(Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
+            {
+                Controlador.Errores.Add("No tiene permisos para dar de alta un Padre");
+                return Controlador;
+            }
+
+            return Principal.Instance.AltaPadre(padre);
         }
 
         public Resultado AsignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
@@ -133,7 +93,7 @@ namespace ImplementacionService
                 }
                 else
                 {
-
+                    Controlador.Errores.Add("No tiene permisos para editar a un Docente.");
                 }
             return Controlador;
         }
@@ -165,7 +125,13 @@ namespace ImplementacionService
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return new Grilla<Hijo>()
+            {
+                Lista = Principal.Instance.GetHijos()
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = Principal.Instance.GetHijos().Count
+            };
         }
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
@@ -211,21 +177,25 @@ namespace ImplementacionService
         {
             return new Grilla<Padre>()
             {
-                /*Lista = _padres
+                Lista = Principal.Instance.GetPadres()
                 .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
                 .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _padres.Count*/
+                CantidadRegistros = Principal.Instance.GetPadres().Count
             };
         }
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+
+            //TODO VER PERMISOS DE LOGUEADO
+            return Principal.Instance.GetHijos().ToArray<Hijo>();
         }
 
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            //TODO validar usuario logeado
+
+            return Principal.Instance.GetSalas();
         }
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
@@ -252,7 +222,15 @@ namespace ImplementacionService
 
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
+            {
+                Controlador.Errores.Add("No tiene permisos para dar de alta un Alumno");
+                return Controlador;
+            }
+
+            return Principal.Instance.AltaHijo(hijo);
         }
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
@@ -273,17 +251,20 @@ namespace ImplementacionService
 
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            //TODO VER PERMISOS DE LOGUEADO
+            return Principal.Instance.GetDocentes().Where(x => x.Id == id).FirstOrDefault();
         }
 
         public Padre ObtenerPadrePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            //TODO VER PERMISOS DE LOGUEADO
+            return Principal.Instance.GetPadres().Where(x => x.Id == id).FirstOrDefault();
         }
 
         public Hijo ObtenerAlumnoPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            //TODO VER PERMISOS DE LOGUEADO
+            return Principal.Instance.GetHijos().Where(x => x.Id == id).FirstOrDefault();
         }
 
         private string ErrorRol(UsuarioLogueado usuarioLogueado, Roles Rol)

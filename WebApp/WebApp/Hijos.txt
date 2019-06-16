@@ -1,0 +1,1 @@
+[{"Id":1,"Nombre":"Lorenzo","Apellido":"Chiabotto","Email":"lorenzochiabotto@gmail.com","idInstitucion":0,"FechaNacimiento":"2019-06-04T00:00:00","ResultadoUltimaEvaluacionAnual":0,"idSala":2,"idNotas":[]}]
