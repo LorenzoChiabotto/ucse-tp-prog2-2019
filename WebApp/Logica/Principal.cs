@@ -35,6 +35,26 @@ namespace Logica
             }
         }
 
+        public UsuarioLogueado LogearUsuario(string email, string password)
+        {
+            UsuarioJson user = GetUsersJson().Where(x => x.Email == email).FirstOrDefault();
+
+            if (user == null) return null;
+            if (user.Password != password) return null;
+
+            return new UsuarioLogueado()
+            {
+                Apellido = user.Apellido,
+                Email = user.Email,
+                Nombre = user.Nombre,
+                Roles = user.Roles,
+                RolSeleccionado = user.Roles.Max(), //TODO SELECCIONAR ROL DE ALGUNA MANER..... ROL/email ?
+            };
+        }
+
+
+
+
         #region USUARIOS
 
         private int GuardarUserJson(UsuarioJson user)
@@ -697,6 +717,18 @@ namespace Logica
             return listaRol.ToArray();
         }
 
+
+        public static Roles[] ToRolesArray(this int[] IntArray)
+        {
+            List<Roles> retorno = new List<Roles>();
+
+            foreach (int item in IntArray)
+            {
+                retorno.Add((Roles)item);
+            }
+
+            return retorno.ToArray();
+        }
 
         public static Sala[] ToSalasArray(this int[] IntArray, List<SalaJson> salas)
         {

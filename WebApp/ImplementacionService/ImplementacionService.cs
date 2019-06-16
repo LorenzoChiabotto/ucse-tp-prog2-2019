@@ -200,19 +200,10 @@ namespace ImplementacionService
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
-            //if (email == "" || clave == "")
-            //    return null;
+            if (email == "" || clave == "")
+                return null;
 
-            //foreach (var usuarioJson in Principal.Instance.GetUsersJson())
-            //{
-            //    if (email == usuarioJson.Email && clave == usuarioJson.Password)
-            //    {
-            //        return new UsuarioLogueado() { Email = usuarioJson.Email, Nombre = usuarioJson.Nombre, Apellido = usuarioJson.Apellido };
-            //    }
-            //}
-
-            //return null;
-            throw new NotImplementedException();
+            return Principal.Instance.LogearUsuario(email, clave);
         }
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
