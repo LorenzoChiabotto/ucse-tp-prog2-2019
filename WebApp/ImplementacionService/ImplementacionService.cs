@@ -81,7 +81,16 @@ namespace ImplementacionService
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+            if (usuarioLogueado.Roles.Contains(Roles.Directora))
+            {
+                Controlador = Principal.Instance.ModificarDirectora(id, directora);
+            }
+            else
+            {
+                Controlador.Errores.Add("No tiene permisos para editar a una Directora.");
+            }
+            return Controlador;
         }
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
@@ -100,22 +109,56 @@ namespace ImplementacionService
 
         public Resultado EditarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
+            {
+                Controlador.Errores.Add("No tiene permisos para editar un Padre");
+                return Controlador;
+            }
+
+            return Controlador;
         }
 
         public Resultado EliminarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+            if (usuarioLogueado.Roles.Contains(Roles.Directora))
+            {
+                Controlador = Principal.Instance.ModificarDirectora(id, directora);
+            }
+            else
+            {
+                Controlador.Errores.Add("No tiene permisos para eliminar a una Directora.");
+            }
+            return Controlador;
         }
 
         public Resultado EliminarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+            if (usuarioLogueado.Roles.Contains(Roles.Directora))
+            {
+                Controlador = Principal.Instance.ModificarDocente(id, docente);
+            }
+            else
+            {
+                Controlador.Errores.Add("No tiene permisos para eliminar a un Docente.");
+            }
+            return Controlador;
         }
 
         public Resultado EliminarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
+            {
+                Controlador.Errores.Add("No tiene permisos para eliminar un Padre");
+                return Controlador;
+            }
+
+            return Controlador;
         }
 
         public Resultado MarcarNotaComoLeida(Nota nota, UsuarioLogueado usuarioLogueado)
@@ -226,12 +269,26 @@ namespace ImplementacionService
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
+            {
+                Controlador.Errores.Add("No tiene permisos para editar un Alumno");
+                return Controlador;
+            }
+            return Controlador;
         }
 
         public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado Controlador = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
+            {
+                Controlador.Errores.Add("No tiene permisos para eliminar un Alumno");
+                return Controlador;
+            }
+            return Controlador;
         }
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)

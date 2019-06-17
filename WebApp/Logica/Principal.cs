@@ -168,6 +168,39 @@ namespace Logica
             return Controlador;
         }
         
+        public Resultado ModificarDirectora(int id, Directora directora)
+        {
+            Resultado Controlador = new Resultado();
+            List<UsuarioJson> listaDirectoras = GetUsersJson();
+            UsuarioJson usuarioDirector = listaDirectoras.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
+            if (usuarioDirector==null)
+            {
+                Controlador.Errores.Add("No existe esta directora.");
+                return Controlador;
+            }
+            else
+            {
+                usuarioDirector.Nombre = directora.Nombre;
+                usuarioDirector.Apellido = directora.Apellido;
+                usuarioDirector.Email = directora.Email;
+            }
+            listaDirectoras.RemoveAt(listaDirectoras.IndexOf(usuarioDirector));
+            return Controlador;
+        }
+        public Resultado BajaDirectora(int id, Directora directora)
+        {
+            Resultado Controlador = new Resultado();
+            List<UsuarioJson> listaDirectoras = GetUsersJson();
+            UsuarioJson usuarioDirector = listaDirectoras.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
+            if (usuarioDirector == null)
+            {
+                Controlador.Errores.Add("No existe esta directora.");
+                return Controlador;
+            }
+            listaDirectoras.Remove(usuarioDirector);
+            
+            return Controlador;
+        }
         private List<DirectoraJson> GetDirectorasJson()
         {
             List<DirectoraJson> listaDirectoras;
@@ -300,7 +333,7 @@ namespace Logica
             //TODO Modificar Autousuario y Pasword
 
             List<UsuarioJson> listaDocentes = GetUsersJson();
-            UsuarioJson usuarioDocente = listaDocentes.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
+            UsuarioJson usuarioDocente =  listaDocentes.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
             if (usuarioDocente == null)
             {
                 Controlador.Errores.Add("No existe este docente.");
@@ -310,15 +343,30 @@ namespace Logica
             {
                 usuarioDocente.Nombre = docente.Nombre;
                 usuarioDocente.Apellido = docente.Apellido;
-                usuarioDocente.Email = docente.Email;
-            }
-
-            
+                usuarioDocente.Email = docente.Email;              
+            }        
             listaDocentes.RemoveAt(listaDocentes.IndexOf(usuarioDocente));
-
+            listaDocentes.Add(listaDocentes.Where(x => x.Id == id).FirstOrDefault());
+            
             return Controlador;
         }
-        
+        public Resultado BajaDocente(int id, Docente docente)
+        {
+            Resultado Controlador = new Resultado();
+
+            //TODO Modificar Autousuario y Pasword
+
+            List<UsuarioJson> listaDocentes = GetUsersJson();
+            UsuarioJson usuarioDocente = listaDocentes.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
+            if (usuarioDocente == null)
+            {
+                Controlador.Errores.Add("No existe este docente.");
+                return Controlador;
+            }
+            listaDocentes.Remove(usuarioDocente);
+            return Controlador;
+        }
+
 
         private List<DocenteJson> GetDocentesJson()
         {
