@@ -12,5 +12,7 @@ namespace Logica
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public DateTime? FechaEventoAsociado { get; set; }
+        public bool Leida { get; set; }
+        public ComentarioJson[] Comentarios { get; set; }
     }
 }

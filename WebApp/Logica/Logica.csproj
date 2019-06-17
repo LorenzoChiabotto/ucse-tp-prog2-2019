@@ -49,7 +49,6 @@
     <Compile Include="DirectoraJson.cs" />
     <Compile Include="DocenteJson.cs" />
     <Compile Include="HijoJson.cs" />
-    <Compile Include="NotaAlumnoJson.cs" />
     <Compile Include="NotaJson.cs" />
     <Compile Include="PadreJson.cs" />
     <Compile Include="Principal.cs" />
