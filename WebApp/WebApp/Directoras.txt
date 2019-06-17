@@ -1,1 +1,1 @@
-[{"IdUser":1,"Institucion":0,"Cargo":"Principal","FechaIngreso":"2019-04-30T00:00:00"},{"IdUser":2,"Institucion":0,"Cargo":"Secundario","FechaIngreso":"2019-06-16T00:00:00"}]
+[{"IdUser":1,"Institucion":0,"Cargo":"Administrador","FechaIngreso":"2019-04-30T00:00:00"},{"IdUser":2,"Institucion":0,"Cargo":"Principal","FechaIngreso":"2019-06-14T00:00:00"},{"IdUser":3,"Institucion":0,"Cargo":"Secundario","FechaIngreso":"2019-06-17T00:00:00"}]

@@ -17,6 +17,6 @@ namespace Logica
         public DateTime FechaNacimiento { get; set; }
         public int ResultadoUltimaEvaluacionAnual { get; set; }
         public int idSala { get; set; }
-        public int[] idNotas { get; set; }
+        public int[] idNotasAlumno { get; set; }
     }
 }

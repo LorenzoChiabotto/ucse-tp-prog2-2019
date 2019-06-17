@@ -45,9 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComentarioJson.cs" />
     <Compile Include="DirectoraJson.cs" />
     <Compile Include="DocenteJson.cs" />
     <Compile Include="HijoJson.cs" />
+    <Compile Include="NotaAlumnoJson.cs" />
+    <Compile Include="NotaJson.cs" />
     <Compile Include="PadreJson.cs" />
     <Compile Include="Principal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

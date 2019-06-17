@@ -1,6 +1,7 @@
 ﻿using Contratos;
 using Logica;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ImplementacionService
@@ -43,7 +44,24 @@ namespace ImplementacionService
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            if (salas == null && hijos == null) return Principal.Instance.AltaNota(nota, Principal.Instance.GetHijos());
+
+            List<Hijo> lista = new List<Hijo>();
+            List<Hijo> listaHijos = Principal.Instance.GetHijos();
+            
+            if(hijos.Count() > 0)
+            { 
+                lista.AddRange(hijos);
+            }
+            else
+            {
+                foreach (Sala item in salas)
+                {
+                    lista.AddRange(listaHijos.Where(x => x.Sala.Id == item.Id).ToList());
+                }
+            }
+
+            return Principal.Instance.AltaNota(nota, lista);
         }
 
         public Resultado AltaPadreMadre(Padre padre, UsuarioLogueado usuarioLogueado)
@@ -179,7 +197,7 @@ namespace ImplementacionService
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return Principal.Instance.GetHijos().Where(x => x.Id == idPersona).FirstOrDefault().Notas;
         }
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
