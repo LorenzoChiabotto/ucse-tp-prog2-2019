@@ -36,7 +36,37 @@ namespace Logica
 
         public UsuarioLogueado LogearUsuario(string email, string password)
         {
-            UsuarioJson user = GetUsersJson().Where(x => x.Email == email).FirstOrDefault();
+            String[] strings = email.Split('/');
+            UsuarioJson user;
+
+            int rol = -1;
+            if (strings.Length == 2)
+            {
+                user = GetUsersJson().Where(x => x.Email == strings[1]).FirstOrDefault();
+                switch (strings[0])
+                {
+                    case "Director":
+                        {
+                            rol = 1;
+                            break;
+                        }
+                    case "Docente":
+                        {
+                            rol = 2;
+                            break;
+                        }
+                    case "Padre":
+                        {
+                            rol = 0;
+                            break;
+                        }
+                    default: break;
+                }
+            }
+            else
+            {
+                user = GetUsersJson().Where(x => x.Email == email).FirstOrDefault();
+            }
 
             if (user == null) return null;
             if (user.Password != password) return null;
@@ -47,7 +77,7 @@ namespace Logica
                 Email = user.Email,
                 Nombre = user.Nombre,
                 Roles = user.Roles,
-                RolSeleccionado = user.Roles.Max(), //TODO SELECCIONAR ROL DE ALGUNA MANER..... ROL/email ?
+                RolSeleccionado = rol == -1? user.Roles.Max(): (Roles)rol, //TODO SELECCIONAR ROL DE ALGUNA MANER..... ROL/email ?
             };
         }
 
@@ -202,7 +232,7 @@ namespace Logica
         {
             Resultado Controlador = new Resultado();
             List<UsuarioJson> listaDirectoras = GetUsersJson();
-            UsuarioJson usuarioDirector = listaDirectoras.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
+            UsuarioJson usuarioDirector = listaDirectoras.Where(x => x.Id == id && x.Roles.Contains(Roles.Directora)).FirstOrDefault();
             if (usuarioDirector==null)
             {
                 Controlador.Errores.Add("No existe esta directora.");
@@ -396,7 +426,38 @@ namespace Logica
             listaDocentes.Remove(usuarioDocente);
             return Controlador;
         }
+        public Resultado AsignarDesasignarSala(int idSala, Docente docente, bool Asignar)
+        {
+            Resultado Controlador = new Resultado();
+            List<DocenteJson> docentesJson = GetDocentesJson();
 
+            if (Asignar)
+            {
+                if(docentesJson.Where(x=> x.IdUser == docente.Id).FirstOrDefault().idSalas.Contains(idSala))
+                {
+                    Controlador.Errores.Add("Ya tiene esta sala asignada");
+                    return Controlador;
+                }
+                docentesJson.Where(x => x.IdUser == docente.Id).FirstOrDefault().idSalas = docentesJson.Where(x => x.IdUser == docente.Id).FirstOrDefault().idSalas.AddInt(idSala);
+            }
+            else
+            {
+                if (! docentesJson.Where(x => x.IdUser == docente.Id).FirstOrDefault().idSalas.Contains(idSala))
+                {
+                    Controlador.Errores.Add("No tiene esta sala asignada");
+                    return Controlador;
+                }
+                docentesJson.Where(x => x.IdUser == docente.Id).FirstOrDefault().idSalas = docentesJson.Where(x => x.IdUser == docente.Id).FirstOrDefault().idSalas.RemoveInt(idSala);
+            }
+
+            string outpuDocentes = JsonConvert.SerializeObject(docentesJson);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Docentes.txt", false))
+            {
+                strWriter.Write(outpuDocentes);
+            }
+
+            return Controlador;
+        }
 
         private List<DocenteJson> GetDocentesJson()
         {
@@ -613,7 +674,38 @@ namespace Logica
 
             return Controlador;
         }
+        public Resultado AsignarDesasignarHijo(int idHijo, Padre padre, bool Asignar)
+        {
+            Resultado Controlador = new Resultado();
+            List<PadreJson> padresJson = GetPadresJson();
 
+            if (Asignar)
+            {
+                if (padresJson.Where(x => x.IdUser == padre.Id).FirstOrDefault().idHijos.Contains(idHijo))
+                {
+                    Controlador.Errores.Add("Ya tiene este hijo asignado");
+                    return Controlador;
+                }
+                padresJson.Where(x => x.IdUser == padre.Id).FirstOrDefault().idHijos = padresJson.Where(x => x.IdUser == padre.Id).FirstOrDefault().idHijos.AddInt(idHijo);
+            }
+            else
+            {
+                if (!padresJson.Where(x => x.IdUser == padre.Id).FirstOrDefault().idHijos.Contains(idHijo))
+                {
+                    Controlador.Errores.Add("No tiene este hijo asignado");
+                    return Controlador;
+                }
+                padresJson.Where(x => x.IdUser == padre.Id).FirstOrDefault().idHijos = padresJson.Where(x => x.IdUser == padre.Id).FirstOrDefault().idHijos.RemoveInt(idHijo);
+            }
+
+            string outpuDocentes = JsonConvert.SerializeObject(padresJson);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Padres.txt", false))
+            {
+                strWriter.Write(outpuDocentes);
+            }
+
+            return Controlador;
+        }
 
         private List<PadreJson> GetPadresJson()
         {
@@ -712,7 +804,7 @@ namespace Logica
         }
 
 
-        private List<HijoJson> GetHijosJson()
+        public List<HijoJson> GetHijosJson()
         {
             List<HijoJson> listaHijos;
             FileStream file;
@@ -835,7 +927,7 @@ namespace Logica
                 notas.Add(new Nota()
                 {
                     Id = notasJson.Where(x => x.Id == item).FirstOrDefault().Id,
-                    Comentarios = notasJson.Where(x => x.Id == item).FirstOrDefault().Comentarios.ToComentariosArray(),
+                    Comentarios = notasJson.Where(x => x.Id == item).FirstOrDefault().Comentarios.ToComentariosArray().OrderBy(x=>x.Fecha).ToArray(),
                     Descripcion = notasJson.Where(x => x.Id == item).FirstOrDefault().Descripcion,
                     FechaEventoAsociado = notasJson.Where(x => x.Id == item).FirstOrDefault().FechaEventoAsociado,
                     Leida = notasJson.Where(x => x.Id == item).FirstOrDefault().Leida,
@@ -875,12 +967,68 @@ namespace Logica
             return listaNotas;
         }
 
+        public Resultado MarcarComoLeida(Nota nota)
+        {
+            Resultado Controlador = new Resultado();
+            List<NotaJson> notasJson = GetNotasJson();
+            notasJson.Where(x => x.Id == nota.Id).FirstOrDefault().Leida = true;
+
+
+            string outputNotas = JsonConvert.SerializeObject(notasJson);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Notas.txt", false))
+            {
+                strWriter.Write(outputNotas);
+            }
+
+            return Controlador;
+        }
+
+        public Resultado ResponderNota(Nota nota, Comentario comentario)
+        {
+            ComentarioJson comentarioJson = new ComentarioJson()
+            {
+                Fecha = comentario.Fecha,
+                idUser = GetUsersJson().Where(x=> x.Email == comentario.Usuario.Email).FirstOrDefault().Id,
+                Mensaje = comentario.Mensaje,
+            };
+
+            Resultado Controlador = new Resultado();
+            List<NotaJson> notasJson = GetNotasJson();
+            notasJson.Where(x => x.Id == nota.Id).FirstOrDefault().Comentarios = notasJson.Where(x => x.Id == nota.Id).FirstOrDefault().Comentarios.AddComentario(comentarioJson);
+
+
+            string outputNotas = JsonConvert.SerializeObject(notasJson);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Notas.txt", false))
+            {
+                strWriter.Write(outputNotas);
+            }
+
+            return Controlador;
+        }
         #endregion
     }
 
 
     static class ExtensionMethods
     {
+
+        public static int[] AddInt(this int[] IntArray, int value)
+        {
+            List<int> retorno = IntArray.ToList();
+            
+            retorno.Add(value);
+
+            return retorno.ToArray();
+        }
+        public static int[] RemoveInt(this int[] IntArray, int value)
+        {
+            List<int> retorno = IntArray.ToList();
+
+            retorno.Remove(value);
+
+            return retorno.ToArray();
+        }
+
         public static Roles[] AddRol(this Roles[] roles, Roles rolAdd)
         {
             List<Roles> listaRol = roles.ToList();
@@ -917,12 +1065,11 @@ namespace Logica
             return retorno.ToArray();
         }
 
-
         public static Hijo[] ToHijosArray(this int[] IntArray, List<HijoJson> hijos)
         {
             List<Hijo> retorno = new List<Hijo>();
-            List<UsuarioJson> users = new List<UsuarioJson>();
-            UsuarioJson user;
+            List<HijoJson> users = Principal.Instance.GetHijosJson();
+            HijoJson user;
 
             foreach (int item in IntArray)
             {
@@ -958,6 +1105,15 @@ namespace Logica
                     Usuario = Principal.Instance.GetUsuario(item.idUser),
                 });
             }
+
+            return retorno.ToArray();
+        }
+
+        public static ComentarioJson[] AddComentario(this ComentarioJson[] ComentArray, ComentarioJson comentario)
+        {
+            List<ComentarioJson> retorno = ComentArray.ToList();
+
+            retorno.Add(comentario);
 
             return retorno.ToArray();
         }

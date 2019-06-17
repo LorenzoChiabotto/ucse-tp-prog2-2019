@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Logica
 {
-    class HijoJson
+    public class HijoJson
     {
         public int Id { get; set; }
         public string Nombre { get; set; }

@@ -79,22 +79,22 @@ namespace ImplementacionService
 
         public Resultado AsignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return Principal.Instance.AsignarDesasignarSala(sala.Id, docente, true);
         }
 
         public Resultado AsignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return Principal.Instance.AsignarDesasignarHijo(hijo.Id, padre, true);
         }
 
         public Resultado DesasignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return Principal.Instance.AsignarDesasignarSala(sala.Id, docente, false);
         }
 
         public Resultado DesasignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return Principal.Instance.AsignarDesasignarHijo(hijo.Id, padre, false);
         }
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
@@ -181,7 +181,7 @@ namespace ImplementacionService
 
         public Resultado MarcarNotaComoLeida(Nota nota, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return Principal.Instance.MarcarComoLeida(nota);
         }
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
@@ -269,7 +269,7 @@ namespace ImplementacionService
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return Principal.Instance.ResponderNota(nota, nuevoComentario);
         }
 
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
