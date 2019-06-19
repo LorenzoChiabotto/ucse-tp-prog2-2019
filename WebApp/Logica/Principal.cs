@@ -230,9 +230,13 @@ namespace Logica
         
         public Resultado ModificarDirectora(int id, Directora directora)
         {
+            int indice = 0;
             Resultado Controlador = new Resultado();
             List<UsuarioJson> listaDirectoras = GetUsersJson();
-            UsuarioJson usuarioDirector = listaDirectoras.Where(x => x.Id == id && x.Roles.Contains(Roles.Directora)).FirstOrDefault();
+            UsuarioJson usuarioDirector = listaDirectoras.Where(x => x.Id == id ).FirstOrDefault();
+
+            indice = listaDirectoras.IndexOf(usuarioDirector);
+
             if (usuarioDirector==null)
             {
                 Controlador.Errores.Add("No existe esta directora.");
@@ -245,6 +249,39 @@ namespace Logica
                 usuarioDirector.Email = directora.Email;
             }
             listaDirectoras.RemoveAt(listaDirectoras.IndexOf(usuarioDirector));
+            listaDirectoras.Insert(indice, usuarioDirector);
+
+            string outputDocentes = JsonConvert.SerializeObject(listaDirectoras);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
+            {
+                strWriter.Write(outputDocentes);
+            }
+
+
+            List<DirectoraJson> listaDirectoras2 = GetDirectorasJson();
+            DirectoraJson usuarioDirector2 = listaDirectoras2.Where(x => x.IdUser == id).FirstOrDefault();
+
+            indice = listaDirectoras2.IndexOf(usuarioDirector2);
+
+            if (usuarioDirector2 == null)
+            {
+                Controlador.Errores.Add("No existe esta directora.");
+                return Controlador;
+            }
+            else
+            {
+                usuarioDirector2.Cargo = directora.Cargo;
+                usuarioDirector2.FechaIngreso = directora.FechaIngreso;
+            }
+            listaDirectoras2.RemoveAt(listaDirectoras2.IndexOf(usuarioDirector2));
+            listaDirectoras2.Insert(indice, usuarioDirector2);
+
+            string outputDocentes2 = JsonConvert.SerializeObject(listaDirectoras2);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Directoras.txt", false))
+            {
+                strWriter.Write(outputDocentes2);
+            }
+
             return Controlador;
         }
         public Resultado BajaDirectora(int id, Directora directora)
