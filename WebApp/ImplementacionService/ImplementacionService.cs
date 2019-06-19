@@ -306,7 +306,9 @@ namespace ImplementacionService
                 Controlador.Errores.Add("No tiene permisos para editar un Alumno");
                 return Controlador;
             }
+             Controlador = Principal.Instance.ModificarAlumno(id,hijo);
             return Controlador;
+            
         }
 
         public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
@@ -318,7 +320,9 @@ namespace ImplementacionService
                 Controlador.Errores.Add("No tiene permisos para eliminar un Alumno");
                 return Controlador;
             }
+            Controlador = Principal.Instance.BajaAlumno(id, hijo);
             return Controlador;
+            
         }
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)

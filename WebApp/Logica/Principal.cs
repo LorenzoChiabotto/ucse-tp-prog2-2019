@@ -947,7 +947,69 @@ namespace Logica
             return Controlador;
         }
 
+        public Resultado ModificarAlumno(int id, Hijo hijo)
+        {
+            Resultado Controlador = new Resultado();
 
+            int indice = 0;
+            List<HijoJson> listaHijos = GetHijosJson();
+            HijoJson usuarioHijo = listaHijos.Where(x => x.Id == id).FirstOrDefault();
+    
+            indice = listaHijos.IndexOf(usuarioHijo);
+
+            if (usuarioHijo == null)
+            {
+                Controlador.Errores.Add("No existe este Alumno.");
+                return Controlador;
+            }
+            else
+            {
+                usuarioHijo.Id = id;
+                usuarioHijo.Nombre = hijo.Nombre;
+                usuarioHijo.Apellido = hijo.Apellido;
+                usuarioHijo.Email = hijo.Email;
+                usuarioHijo.FechaNacimiento = hijo.FechaNacimiento;
+                usuarioHijo.ResultadoUltimaEvaluacionAnual = hijo.ResultadoUltimaEvaluacionAnual;
+
+            }
+
+            listaHijos.RemoveAt(listaHijos.IndexOf(usuarioHijo));
+            listaHijos.Insert(indice, usuarioHijo);
+
+            string outputHijos = JsonConvert.SerializeObject(listaHijos);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Hijos.txt", false))
+            {
+                strWriter.Write(outputHijos);
+            }
+
+
+            return Controlador;
+        }
+        public Resultado BajaAlumno(int id, Hijo hijo)
+        {
+            Resultado Controlador = new Resultado();
+
+            int indice = 0;
+            List<HijoJson> listaHijosa = GetHijosJson();
+            HijoJson usuarioHijo = listaHijosa.Where(x => x.Id == id).FirstOrDefault();
+
+            indice = listaHijosa.IndexOf(usuarioHijo);
+
+            if (usuarioHijo == null)
+            {
+                Controlador.Errores.Add("No existe este Alumno.");
+                return Controlador;
+            }
+
+            listaHijosa.RemoveAt(listaHijosa.IndexOf(usuarioHijo));
+
+            string outputHijos = JsonConvert.SerializeObject(listaHijosa);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Hijos.txt", false))
+            {
+                strWriter.Write(outputHijos);
+            }
+            return Controlador;
+        }
         public List<HijoJson> GetHijosJson()
         {
             List<HijoJson> listaHijos;
