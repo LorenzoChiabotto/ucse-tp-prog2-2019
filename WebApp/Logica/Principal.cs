@@ -386,14 +386,14 @@ namespace Logica
 
             return Controlador;
         }
-        public Resultado  ModificarDocente(int id, Docente docente)
+        public Resultado ModificarDocente(int id, Docente docente)
         {
             Resultado Controlador = new Resultado();
 
             //TODO Modificar Autousuario y Pasword
-
+            int indice = 0;
             List<UsuarioJson> listaDocentes = GetUsersJson();
-            UsuarioJson usuarioDocente =  listaDocentes.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
+            UsuarioJson usuarioDocente = listaDocentes.Where(x => x.Id == id).FirstOrDefault();
             if (usuarioDocente == null)
             {
                 Controlador.Errores.Add("No existe este docente.");
@@ -401,13 +401,24 @@ namespace Logica
             }
             else
             {
+                usuarioDocente.Id = id;
                 usuarioDocente.Nombre = docente.Nombre;
                 usuarioDocente.Apellido = docente.Apellido;
-                usuarioDocente.Email = docente.Email;              
-            }        
+                usuarioDocente.Email = docente.Email;
+            }
+            indice = listaDocentes.IndexOf(usuarioDocente);
             listaDocentes.RemoveAt(listaDocentes.IndexOf(usuarioDocente));
-            listaDocentes.Add(listaDocentes.Where(x => x.Id == id).FirstOrDefault());
-            
+            listaDocentes.Insert(indice, usuarioDocente);
+            GuardarUserJson(usuarioDocente);
+            List<DocenteJson> listadocentes = GetDocentesJson();
+
+            string outputDocentes = JsonConvert.SerializeObject(listaDocentes);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Docentes.txt", false))
+            {
+                strWriter.Write(outputDocentes);
+            }
+
+
             return Controlador;
         }
         public Resultado BajaDocente(int id, Docente docente)
