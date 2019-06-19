@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
-using System.Text.RegularExpressions;
 
 namespace ImplementacionService
 {
@@ -18,15 +17,15 @@ namespace ImplementacionService
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
-            
+
             if (usuarioLogueado.RolSeleccionado != Roles.Directora)
             {
                 Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
                 return Controlador;
             }
-            
+
             return Principal.Instance.AltaDirectora(directora);
-            
+
         }
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
@@ -41,7 +40,7 @@ namespace ImplementacionService
             }
 
             return Principal.Instance.AltaDocente(docente);
-            
+
         }
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)
@@ -50,9 +49,9 @@ namespace ImplementacionService
 
             List<Hijo> lista = new List<Hijo>();
             List<Hijo> listaHijos = Principal.Instance.GetHijos();
-            
-            if(hijos.Count() > 0)
-            { 
+
+            if (hijos.Count() > 0)
+            {
                 lista.AddRange(hijos);
             }
             else
@@ -116,14 +115,14 @@ namespace ImplementacionService
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
-                if (usuarioLogueado.Roles.Contains(Roles.Directora))
-                {
-                    Controlador = Principal.Instance.ModificarDocente(id, docente);
-                }
-                else
-                {
-                    Controlador.Errores.Add("No tiene permisos para editar a un Docente.");
-                }
+            if (usuarioLogueado.Roles.Contains(Roles.Directora))
+            {
+                Controlador = Principal.Instance.ModificarDocente(id, docente);
+            }
+            else
+            {
+                Controlador.Errores.Add("No tiene permisos para editar a un Docente.");
+            }
             return Controlador;
         }
 
@@ -133,7 +132,6 @@ namespace ImplementacionService
 
             if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
             {
-                
                 Controlador.Errores.Add("No tiene permisos para editar un Padre");
                 return Controlador;
             }
@@ -178,7 +176,7 @@ namespace ImplementacionService
                 Controlador.Errores.Add("No tiene permisos para eliminar un Padre");
                 return Controlador;
             }
-            Principal.Instance.BajaPadre(id,padre);
+            Principal.Instance.BajaPadre(id, padre);
             return Controlador;
         }
 
@@ -239,6 +237,7 @@ namespace ImplementacionService
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
+            //
             return new Grilla<Padre>()
             {
                 Lista = Principal.Instance.GetPadres()
@@ -250,22 +249,78 @@ namespace ImplementacionService
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
         {
-
-            //TODO VER PERMISOS DE LOGUEADO
-            return Principal.Instance.GetHijos().ToArray<Hijo>();
+            Hijo[] lhijos = new Hijo[0];
+            switch (usuarioLogueado.RolSeleccionado)
+            {
+                case Roles.Padre:
+                    Padre padre = Principal.Instance.GetPadres().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    foreach (var lh in padre.Hijos)
+                    {
+                        lhijos = Principal.Instance.GetHijos().Where(x => x.Id == lh.Id).ToArray();
+                    }
+                    break;
+                case Roles.Directora:
+                    Directora directora = Principal.Instance.GetDirectoras().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    foreach (var lh in Principal.Instance.GetHijos())
+                    {
+                        lhijos = Principal.Instance.GetHijos().Where(x => x.Id == lh.Id && x.Institucion.Id == directora.Institucion.Id).ToArray();
+                    }
+                    break;
+                case Roles.Docente:
+                    Docente docente = Principal.Instance.GetDocentes().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    foreach (var sd in docente.Salas)
+                    {
+                        lhijos = Principal.Instance.GetHijos().Where(x => x.Sala.Id == sd.Id).ToArray();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return lhijos;
         }
 
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)
         {
-            //TODO validar usuario logeado
-
-            return Principal.Instance.GetSalas();
+            Sala[] lsalas = new Sala[0];
+            switch (usuarioLogueado.RolSeleccionado)
+            {
+                case Roles.Padre:
+                    Padre padre = Principal.Instance.GetPadres().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    foreach (var lh in padre.Hijos)
+                    {
+                        lsalas = Principal.Instance.GetSalas().Where(x => x.Id == lh.Sala.Id).ToArray();
+                    }
+                    break;
+                case Roles.Directora:
+                    Directora directora = Principal.Instance.GetDirectoras().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    foreach (var lh in Principal.Instance.GetHijos())
+                    {
+                        if (directora.Institucion.Id == lh.Institucion.Id)
+                        {
+                            lsalas = Principal.Instance.GetSalas().Where(x => x.Id == lh.Sala.Id).ToArray();
+                        }
+                    }
+                    break;
+                case Roles.Docente:
+                    Docente docente = Principal.Instance.GetDocentes().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    foreach (var sd in docente.Salas)
+                    {
+                        lsalas = Principal.Instance.GetSalas().Where(x => x.Id == sd.Id).ToArray();
+                    }
+                    break;
+                default:
+                    lsalas = Principal.Instance.GetSalas();
+                    break;
+            }
+            return lsalas;
         }
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(clave))
+            {
                 return null;
+            }
 
             try
             {
@@ -306,9 +361,8 @@ namespace ImplementacionService
                 Controlador.Errores.Add("No tiene permisos para editar un Alumno");
                 return Controlador;
             }
-             Controlador = Principal.Instance.ModificarAlumno(id,hijo);
+            Controlador = Principal.Instance.ModificarAlumno(id, hijo);
             return Controlador;
-            
         }
 
         public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
@@ -320,13 +374,41 @@ namespace ImplementacionService
                 Controlador.Errores.Add("No tiene permisos para eliminar un Alumno");
                 return Controlador;
             }
+
             Controlador = Principal.Instance.BajaAlumno(id, hijo);
+
             return Controlador;
-            
         }
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
         {
+            //switch (usuarioLogueado.RolSeleccionado)
+            //{
+            //    case Roles.Padre:
+            //        Padre padre = Principal.Instance.GetPadres().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+            //        foreach (var lh in padre.Hijos)
+            //        {
+            //            lhijos = Principal.Instance.GetHijos().Where(x => x.Id == lh.Id).ToArray();
+            //        }
+            //        break;
+            //    case Roles.Directora:
+            //        Directora directora = Principal.Instance.GetDirectoras().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+            //        foreach (var lh in Principal.Instance.GetHijos())
+            //        {
+            //            lhijos = Principal.Instance.GetHijos().Where(x => x.Id == lh.Id && x.Institucion.Id == directora.Institucion.Id).ToArray();
+            //        }
+            //        break;
+            //    case Roles.Docente:
+            //        Docente docente = Principal.Instance.GetDocentes().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+            //        foreach (var sd in docente.Salas)
+            //        {
+            //            lhijos = Principal.Instance.GetHijos().Where(x => x.Sala.Id == sd.Id).ToArray();
+            //        }
+            //        break;
+            //    default:
+            //        break;
+            //}
+            //return lhijos;
             //TODO VER PERMISOS DE LOGUEADO
             return Principal.Instance.GetDirectoras().Where(x => x.Id == id).FirstOrDefault();
         }
@@ -347,23 +429,6 @@ namespace ImplementacionService
         {
             //TODO VER PERMISOS DE LOGUEADO
             return Principal.Instance.GetHijos().Where(x => x.Id == id).FirstOrDefault();
-        }
-
-        private string ErrorRol(UsuarioLogueado usuarioLogueado, Roles Rol)
-        {
-            bool Bool = false;
-            foreach (Roles Lroles in usuarioLogueado.Roles)
-            {
-                if (Lroles == Rol)
-                {
-                    Bool = true;
-                }
-            }
-            if (!Bool)
-            {
-                return $"El usuario no fue dado de alta con el rol de {usuarioLogueado.RolSeleccionado}.";
-            }
-            return "";
         }
     }
 }
