@@ -235,35 +235,31 @@ namespace ImplementacionService
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
         {
-            Nota[] lnotas = new Nota[0];
+            List<Nota> lnotas = new List<Nota>();
             switch (usuarioLogueado.RolSeleccionado)
             {
                 case Roles.Padre:
                     Padre padre = Principal.Instance.GetPadres().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
                     foreach (var lh in padre.Hijos)
                     {
-                        lnotas = Principal.Instance.GetHijos().Where(x => x.Id == idPersona).FirstOrDefault().Notas;
+                        return Principal.Instance.GetHijos().Where(x => x.Id == idPersona).FirstOrDefault().Notas;
                     }
                     break;
                 case Roles.Directora:
-                    Directora directora = Principal.Instance.GetDirectoras().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
-                    foreach (var ld in Principal.Instance.GetDirectoras())
-                    {
-                        lnotas = Principal.Instance.GetHijos().Where(x => x.Institucion == ld.Institucion && x.Id == idPersona).FirstOrDefault().Notas;
-                    }
-                    break;
+                    return Principal.Instance.GetHijos().Where(x => x.Id == idPersona).FirstOrDefault().Notas;
                 case Roles.Docente:
                     Docente docente = Principal.Instance.GetDocentes().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
-                    foreach (var ld in docente.Salas)
+                    foreach (var ld in Principal.Instance.GetHijos().Where(x => x.Id == idPersona && docente.Salas.Contains(x.Sala)))
                     {
-                        lnotas = Principal.Instance.GetHijos().Where(x => x.Id == idPersona && x.Sala.Id == ld.Id).FirstOrDefault().Notas;
+                        lnotas.AddRange(ld.Notas.ToList());
                     }
+                    
                     break;
                 default:
-                    lnotas = Principal.Instance.GetHijos().Where(x => x.Id == idPersona).FirstOrDefault().Notas;
+                    return null;
                     break;
             }
-            return lnotas;
+            return lnotas.ToArray();
         }
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
@@ -311,14 +307,14 @@ namespace ImplementacionService
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
         {
-            Hijo[] lhijos = new Hijo[0];
+            List<Hijo> lhijos = new List<Hijo>();
             switch (usuarioLogueado.RolSeleccionado)
             {
                 case Roles.Padre:
                     Padre padre = Principal.Instance.GetPadres().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
                     foreach (var lh in padre.Hijos)
                     {
-                        lhijos = Principal.Instance.GetHijos().Where(x => x.Id == lh.Id).ToArray();
+                        lhijos.Add(Principal.Instance.GetHijos().Where(x => x.Id == lh.Id).FirstOrDefault());
                     }
                     break;
                 //case Roles.Directora:
@@ -332,14 +328,14 @@ namespace ImplementacionService
                     Docente docente = Principal.Instance.GetDocentes().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
                     foreach (var sd in docente.Salas)
                     {
-                        lhijos = Principal.Instance.GetHijos().Where(x => x.Sala.Id == sd.Id).ToArray();
+                        lhijos.AddRange(Principal.Instance.GetHijos().Where(x => x.Sala.Id == sd.Id).ToList());
                     }
                     break;
                 default:
-                    lhijos = Principal.Instance.GetHijos().ToArray();
+                    return Principal.Instance.GetHijos().ToArray();
                     break;
             }
-            return lhijos;
+            return lhijos.ToArray();
         }
 
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)

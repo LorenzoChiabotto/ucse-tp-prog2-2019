@@ -43,19 +43,19 @@ namespace Logica
             if (strings.Length == 2)
             {
                 user = GetUsersJson().Where(x => x.Email == strings[1]).FirstOrDefault();
-                switch (strings[0])
+                switch (strings[0].ToUpper())
                 {
-                    case "Director":
+                    case "DIRECTOR":
                         {
                             rol = 1;
                             break;
                         }
-                    case "Docente":
+                    case "DOCENTE":
                         {
                             rol = 2;
                             break;
                         }
-                    case "Padre":
+                    case "PADRE":
                         {
                             rol = 0;
                             break;
