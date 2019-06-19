@@ -77,7 +77,7 @@ namespace Logica
                 Email = user.Email,
                 Nombre = user.Nombre,
                 Roles = user.Roles,
-                RolSeleccionado = rol == -1? user.Roles.Max(): (Roles)rol, //TODO SELECCIONAR ROL DE ALGUNA MANER..... ROL/email ?
+                RolSeleccionado = rol == -1? user.Roles.Max(): (Roles)rol, //TODO SELECCIONAR ROL DE ALGUNA MANERA..... ROL/email ?
             };
         }
 

@@ -1,5 +1,4 @@
 ﻿using Contratos;
-using Mocks;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,8 +19,10 @@ namespace WebApp.Controllers
         {
             if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
             {
-                var c = new HttpCookie(FormsAuthentication.FormsCookieName);
-                c.Expires = DateTime.Now.AddDays(-1);
+                var c = new HttpCookie(FormsAuthentication.FormsCookieName)
+                {
+                    Expires = DateTime.Now.AddDays(-1)
+                };
                 Response.Cookies.Add(c);
             }
 

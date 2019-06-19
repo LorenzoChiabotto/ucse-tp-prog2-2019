@@ -8,7 +8,6 @@ using System;
 using System.Net.Mail;
 using WebApp.Controllers;
 using Contratos;
-using Mocks;
 
 namespace AnBem.WebApplication.Controllers
 {
@@ -18,7 +17,7 @@ namespace AnBem.WebApplication.Controllers
         private static IServicioWeb servicio = new ImplementacionService.ImplementacionService();
         // GET: /Alumnos/
         [HttpGet]
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
             return View();
         }
@@ -52,7 +51,7 @@ namespace AnBem.WebApplication.Controllers
         // POST: /Alumnos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Form(Hijo usuario, bool readOnly = false, bool delete = false)
+        public ActionResult Form(Hijo usuario, bool readOnly = false, bool delete = false)
         {
             if (delete)
             {

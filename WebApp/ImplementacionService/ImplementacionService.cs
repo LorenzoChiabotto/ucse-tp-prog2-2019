@@ -3,6 +3,8 @@ using Logica;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
 
 namespace ImplementacionService
 {
@@ -261,8 +263,17 @@ namespace ImplementacionService
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
-            if (email == "" || clave == "")
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(clave))
                 return null;
+
+            try
+            {
+                MailAddress m = new MailAddress(email);
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
 
             return Principal.Instance.LogearUsuario(email, clave);
         }
