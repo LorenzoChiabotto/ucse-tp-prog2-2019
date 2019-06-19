@@ -286,16 +286,45 @@ namespace Logica
         }
         public Resultado BajaDirectora(int id, Directora directora)
         {
+            int indice = 0;
             Resultado Controlador = new Resultado();
             List<UsuarioJson> listaDirectoras = GetUsersJson();
-            UsuarioJson usuarioDirector = listaDirectoras.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
+            UsuarioJson usuarioDirector = listaDirectoras.Where(x => x.Id == id).FirstOrDefault();
+
+            indice = listaDirectoras.IndexOf(usuarioDirector);
+
             if (usuarioDirector == null)
             {
                 Controlador.Errores.Add("No existe esta directora.");
                 return Controlador;
             }
-            listaDirectoras.Remove(usuarioDirector);
-            
+
+            listaDirectoras.RemoveAt(listaDirectoras.IndexOf(usuarioDirector));
+            string outputDocentes = JsonConvert.SerializeObject(listaDirectoras);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
+            {
+                strWriter.Write(outputDocentes);
+            }
+
+
+            List<DirectoraJson> listaDirectoras2 = GetDirectorasJson();
+            DirectoraJson usuarioDirector2 = listaDirectoras2.Where(x => x.IdUser == id).FirstOrDefault();
+
+            indice = listaDirectoras2.IndexOf(usuarioDirector2);
+
+            if (usuarioDirector2 == null)
+            {
+                Controlador.Errores.Add("No existe esta directora.");
+                return Controlador;
+            }
+            listaDirectoras2.RemoveAt(listaDirectoras2.IndexOf(usuarioDirector2));
+
+            string outputDocentes2 = JsonConvert.SerializeObject(listaDirectoras2);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Directoras.txt", false))
+            {
+                strWriter.Write(outputDocentes2);
+            }
+
             return Controlador;
         }
         private List<DirectoraJson> GetDirectorasJson()
