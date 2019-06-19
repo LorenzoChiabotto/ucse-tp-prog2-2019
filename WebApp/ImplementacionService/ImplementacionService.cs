@@ -133,10 +133,11 @@ namespace ImplementacionService
 
             if (usuarioLogueado.RolSeleccionado != Roles.Directora && usuarioLogueado.RolSeleccionado != Roles.Docente)
             {
+                
                 Controlador.Errores.Add("No tiene permisos para editar un Padre");
                 return Controlador;
             }
-
+            Controlador = Principal.Instance.ModificarPadre(id, padre);
             return Controlador;
         }
 
@@ -177,7 +178,7 @@ namespace ImplementacionService
                 Controlador.Errores.Add("No tiene permisos para eliminar un Padre");
                 return Controlador;
             }
-
+            Principal.Instance.BajaPadre(id,padre);
             return Controlador;
         }
 

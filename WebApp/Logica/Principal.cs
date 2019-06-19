@@ -754,10 +754,12 @@ namespace Logica
         {
             Resultado Controlador = new Resultado();
 
-            //TODO Modificar Autousuario y Pasword
-
+            int indice = 0;
             List<UsuarioJson> listaPadres = GetUsersJson();
             UsuarioJson usuarioPadre = listaPadres.Where(x => x.Id == id && x.Roles.Contains(Roles.Padre)).FirstOrDefault();
+
+            indice = listaPadres.IndexOf(usuarioPadre);
+
             if (usuarioPadre == null)
             {
                 Controlador.Errores.Add("No existe este padre.");
@@ -769,10 +771,53 @@ namespace Logica
                 usuarioPadre.Apellido = padre.Apellido;
                 usuarioPadre.Email = padre.Email;
             }
+
             listaPadres.RemoveAt(listaPadres.IndexOf(usuarioPadre));
+            listaPadres.Insert(indice, usuarioPadre);
+
+            string outputPadres = JsonConvert.SerializeObject(listaPadres);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
+            {
+                strWriter.Write(outputPadres);
+            }
 
             return Controlador;
+         
         }
+        public Resultado BajaPadre(int id, Padre padre)
+        {
+            Resultado Controlador = new Resultado();
+
+            int indice = 0;
+            List<UsuarioJson> listaPadres = GetUsersJson();
+            UsuarioJson usuarioPadre = listaPadres.Where(x => x.Id == id && x.Roles.Contains(Roles.Padre)).FirstOrDefault();
+
+            indice = listaPadres.IndexOf(usuarioPadre);
+
+            if (usuarioPadre == null)
+            {
+                Controlador.Errores.Add("No existe este padre.");
+                return Controlador;
+            }
+            else
+            {
+                usuarioPadre.Nombre = padre.Nombre;
+                usuarioPadre.Apellido = padre.Apellido;
+                usuarioPadre.Email = padre.Email;
+            }
+
+            listaPadres.RemoveAt(listaPadres.IndexOf(usuarioPadre));
+
+            string outputPadres = JsonConvert.SerializeObject(listaPadres);
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
+            {
+                strWriter.Write(outputPadres);
+            }
+
+            return Controlador;
+
+        }
+
         public Resultado AsignarDesasignarHijo(int idHijo, Padre padre, bool Asignar)
         {
             Resultado Controlador = new Resultado();
