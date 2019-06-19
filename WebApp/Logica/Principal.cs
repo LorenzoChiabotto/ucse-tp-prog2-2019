@@ -390,10 +390,12 @@ namespace Logica
         {
             Resultado Controlador = new Resultado();
 
-            //TODO Modificar Autousuario y Pasword
             int indice = 0;
             List<UsuarioJson> listaDocentes = GetUsersJson();
             UsuarioJson usuarioDocente = listaDocentes.Where(x => x.Id == id).FirstOrDefault();
+
+            indice = listaDocentes.IndexOf(usuarioDocente);
+
             if (usuarioDocente == null)
             {
                 Controlador.Errores.Add("No existe este docente.");
@@ -406,18 +408,15 @@ namespace Logica
                 usuarioDocente.Apellido = docente.Apellido;
                 usuarioDocente.Email = docente.Email;
             }
-            indice = listaDocentes.IndexOf(usuarioDocente);
+            
             listaDocentes.RemoveAt(listaDocentes.IndexOf(usuarioDocente));
             listaDocentes.Insert(indice, usuarioDocente);
-            GuardarUserJson(usuarioDocente);
-            List<DocenteJson> listadocentes = GetDocentesJson();
 
             string outputDocentes = JsonConvert.SerializeObject(listaDocentes);
-            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Docentes.txt", false))
+            using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
             {
                 strWriter.Write(outputDocentes);
             }
-
 
             return Controlador;
         }
@@ -426,16 +425,39 @@ namespace Logica
             Resultado Controlador = new Resultado();
 
             //TODO Modificar Autousuario y Pasword
-
+            int indice = 0;
             List<UsuarioJson> listaDocentes = GetUsersJson();
+
             UsuarioJson usuarioDocente = listaDocentes.Where(x => x.Id == id && x.Roles.Contains(Roles.Docente)).FirstOrDefault();
             if (usuarioDocente == null)
             {
                 Controlador.Errores.Add("No existe este docente.");
                 return Controlador;
             }
-            listaDocentes.Remove(usuarioDocente);
-            return Controlador;
+            else
+                /*foreach (var item in usuarioDocente.Roles)
+                {
+                    if (item.ToString() == "Docente")
+                    {
+                        item.ToString() = null;
+                        
+                    }
+
+                } */
+                if (usuarioDocente.Roles == null)
+                {
+                    listaDocentes.RemoveAt(listaDocentes.IndexOf(usuarioDocente));
+
+                    string outputDocentes = JsonConvert.SerializeObject(listaDocentes);
+                    using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
+                    {
+                        strWriter.Write(outputDocentes);
+                    }
+
+                    return Controlador;
+                }
+                listaDocentes.Remove(usuarioDocente);
+                return Controlador;
         }
         public Resultado AsignarDesasignarSala(int idSala, Docente docente, bool Asignar)
         {
