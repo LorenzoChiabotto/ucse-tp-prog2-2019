@@ -215,7 +215,7 @@ namespace Logica
                 IdUser = directora.Id,
                 Cargo = directora.Cargo,
                 FechaIngreso = directora.FechaIngreso,
-                //Institucion = directora.Institucion.Id,
+                Institucion = 0,
             });
 
             string outputDirectoras = JsonConvert.SerializeObject(listaDirectoras);
