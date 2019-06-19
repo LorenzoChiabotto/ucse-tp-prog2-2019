@@ -284,6 +284,7 @@ namespace Logica
 
             return Controlador;
         }
+
         public Resultado BajaDirectora(int id, Directora directora)
         {
             int indice = 0;

@@ -91,7 +91,7 @@ namespace ImplementacionService
             {
                 Controlador.Errores.Add("No tiene permisos para asignar una sala a un docente.");
                 return Controlador;
-            } 
+            }
 
             return Principal.Instance.AsignarDesasignarSala(sala.Id, docente, true);
         }
@@ -175,13 +175,13 @@ namespace ImplementacionService
             Controlador = Principal.Instance.ModificarPadre(id, padre);
             return Controlador;
         }
-        // Hay que corregir
+
         public Resultado EliminarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
             if (usuarioLogueado.Roles.Contains(Roles.Directora))
             {
-                Controlador = Principal.Instance.ModificarDirectora(id, directora);
+                Controlador = Principal.Instance.BajaDirectora(id, directora);
             }
             else
             {
@@ -189,13 +189,13 @@ namespace ImplementacionService
             }
             return Controlador;
         }
-        // Hay que corregir
+
         public Resultado EliminarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
             Resultado Controlador = new Resultado();
             if (usuarioLogueado.Roles.Contains(Roles.Directora))
             {
-                Controlador = Principal.Instance.ModificarDocente(id, docente);
+                Controlador = Principal.Instance.BajaDocente(id, docente);
             }
             else
             {
@@ -242,7 +242,7 @@ namespace ImplementacionService
                     Padre padre = Principal.Instance.GetPadres().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
                     foreach (var lh in padre.Hijos)
                     {
-                        lnotas = Principal.Instance.GetHijos().Where(x => x.Id == idPersona && x.Id == lh.Id).FirstOrDefault().Notas;
+                        lnotas = Principal.Instance.GetHijos().Where(x => x.Id == idPersona).FirstOrDefault().Notas;
                     }
                     break;
                 case Roles.Directora:
@@ -279,7 +279,6 @@ namespace ImplementacionService
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            //TODO VER PERMISOS DE LOGUEADO
             return new Grilla<Docente>()
             {
                 Lista = Principal.Instance.GetDocentes()
@@ -288,7 +287,7 @@ namespace ImplementacionService
                 CantidadRegistros = Principal.Instance.GetDocentes().Count
             };
         }
-        // Falta metodo
+
         public Institucion[] ObtenerInstituciones()
         {
             throw new NotImplementedException();
@@ -301,7 +300,6 @@ namespace ImplementacionService
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            //
             return new Grilla<Padre>()
             {
                 Lista = Principal.Instance.GetPadres()
@@ -401,6 +399,41 @@ namespace ImplementacionService
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
+            Resultado controlador = new Resultado();
+            switch (usuarioLogueado.RolSeleccionado)
+            {
+                case Roles.Padre:
+                    Padre padre = Principal.Instance.GetPadres().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    foreach (var lh in padre.Hijos)
+                    {
+                        foreach (var ln in lh.Notas)
+                        {
+                            if (ln.Id == nota.Id)
+                            {
+                                return Principal.Instance.ResponderNota(nota, nuevoComentario);
+                            }
+                        }
+                    }
+                    break;
+                case Roles.Directora:
+                    return Principal.Instance.ResponderNota(nota, nuevoComentario);
+                    break;
+                case Roles.Docente:
+                    Docente docente = Principal.Instance.GetDocentes().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    foreach (var la in docente.Salas)
+                    {
+                        foreach (var lc in Principal.Instance.GetHijos())
+                        {
+                            if (lc.Sala.Id == la.Id)
+                            {
+                                return Principal.Instance.ResponderNota(nota, nuevoComentario);
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    return Principal.Instance.ResponderNota(nota, nuevoComentario);
+            }
             return Principal.Instance.ResponderNota(nota, nuevoComentario);
         }
 
@@ -447,52 +480,21 @@ namespace ImplementacionService
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            //switch (usuarioLogueado.RolSeleccionado)
-            //{
-            //    case Roles.Padre:
-            //        Padre padre = Principal.Instance.GetPadres().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
-            //        foreach (var lh in padre.Hijos)
-            //        {
-            //            lhijos = Principal.Instance.GetHijos().Where(x => x.Id == lh.Id).ToArray();
-            //        }
-            //        break;
-            //    case Roles.Directora:
-            //        Directora directora = Principal.Instance.GetDirectoras().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
-            //        foreach (var lh in Principal.Instance.GetHijos())
-            //        {
-            //            lhijos = Principal.Instance.GetHijos().Where(x => x.Id == lh.Id && x.Institucion.Id == directora.Institucion.Id).ToArray();
-            //        }
-            //        break;
-            //    case Roles.Docente:
-            //        Docente docente = Principal.Instance.GetDocentes().Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
-            //        foreach (var sd in docente.Salas)
-            //        {
-            //            lhijos = Principal.Instance.GetHijos().Where(x => x.Sala.Id == sd.Id).ToArray();
-            //        }
-            //        break;
-            //    default:
-            //        break;
-            //}
-            //return lhijos;
-            //TODO VER PERMISOS DE LOGUEADO
             return Principal.Instance.GetDirectoras().Where(x => x.Id == id).FirstOrDefault();
         }
 
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            //TODO VER PERMISOS DE LOGUEADO
             return Principal.Instance.GetDocentes().Where(x => x.Id == id).FirstOrDefault();
         }
 
         public Padre ObtenerPadrePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            //TODO VER PERMISOS DE LOGUEADO
             return Principal.Instance.GetPadres().Where(x => x.Id == id).FirstOrDefault();
         }
 
         public Hijo ObtenerAlumnoPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            //TODO VER PERMISOS DE LOGUEADO
             return Principal.Instance.GetHijos().Where(x => x.Id == id).FirstOrDefault();
         }
     }

@@ -1,1 +1,1 @@
-[{"IdUser":2,"idHijos":[3,1]},{"IdUser":5,"idHijos":[]}]
+[{"IdUser":2,"idHijos":[3,1]},{"IdUser":5,"idHijos":[2]}]
