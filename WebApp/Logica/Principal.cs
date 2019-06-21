@@ -12,7 +12,7 @@ namespace Logica
     public class Principal
     {
         //IQUERYABLE<Tipo> query = lista.where().AsQueryable();
-
+        //PODRIA AGREGARSE readonly A LA PROPIEDAD PATH PARA ASEGURARSE Q NO SE MODIFICA NUNCA MAS QUE ACA.
         private string path = $"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"")}";
         
         
@@ -33,7 +33,7 @@ namespace Logica
                 return instance;
             }
         }
-
+        //SACAR EL CODIGO DE MOCK CUANDO YA NO SE USA
         public UsuarioLogueado LogearUsuario(string email, string password)
         {
             String[] strings = email.Split('/');
@@ -94,6 +94,8 @@ namespace Logica
             users.Add(user);
 
             string outputUsers = JsonConvert.SerializeObject(users);
+            //ESTO TAMBIEN PODRIA SER UN UNICO METODO QUE GUARDE LOS DATOS
+            //ASI NO SE HACE MUCHAS VECES EN VARIOS LADOS DISTINTOS
             using (StreamWriter strWriter = new System.IO.StreamWriter(path + "Usuarios.txt", false))
             {
                 strWriter.Write(outputUsers);
@@ -461,6 +463,7 @@ namespace Logica
             List<UsuarioJson> listaDocentes = GetUsersJson();
             UsuarioJson usuarioDocente = listaDocentes.Where(x => x.Id == id).FirstOrDefault();
 
+            //A ESTA ALTURA LOS INDICES YA NO SON NECESARIOS, BUSCAR LOS ELEMENTOS CON WHERE O FIND, OLVIDARSE LOS INDICES
             indice = listaDocentes.IndexOf(usuarioDocente);
 
             if (usuarioDocente == null)
@@ -538,6 +541,7 @@ namespace Logica
                     Controlador.Errores.Add("Ya tiene esta sala asignada");
                     return Controlador;
                 }
+                //EN LOS METODOS "OrDefault" SIEMPRE PREGUNTAR POR NULL ANTES DE USAR LA VARIABLE OBTENIDA
                 docentesJson.Where(x => x.IdUser == docente.Id).FirstOrDefault().idSalas = docentesJson.Where(x => x.IdUser == docente.Id).FirstOrDefault().idSalas.AddInt(idSala);
             }
             else
@@ -1173,7 +1177,7 @@ namespace Logica
 
             return listaNotas;
         }
-
+        //NO VALIDA QUE EL USUARIO LOGUEADO PUEDA ACCEDER A LA NOTA (NO POR EL ROL SINO POR LA SALA / PADRE-HIJO
         public Resultado MarcarComoLeida(Nota nota)
         {
             Resultado Controlador = new Resultado();
@@ -1189,7 +1193,7 @@ namespace Logica
 
             return Controlador;
         }
-
+        //NO VALIDA QUE EL USUARIO LOGUEADO PUEDA ACCEDER A LA NOTA (NO POR EL ROL SINO POR LA SALA / PADRE-HIJO
         public Resultado ResponderNota(Nota nota, Comentario comentario)
         {
             ComentarioJson comentarioJson = new ComentarioJson()
@@ -1215,7 +1219,10 @@ namespace Logica
         #endregion
     }
 
-
+    //BUENISIMO ESTO.
+    //UN DETALLE, COMO SON METODOS DE "EXTENSION" SE PODRIAN USAR EN CUALQUIER LUGAR DEL CODIGO, ENTONCES SERIA
+    //BUENO DEFINIRLO EN UNA BIBLIOTECA DE CLASES NUEVA QUE SE LLAME "UTILS" O ALGO POR EL ESTILO, ENTONCES LOS 
+    //TIENEN DISPONIBLES EN TODA LA APLICACION.
     static class ExtensionMethods
     {
 

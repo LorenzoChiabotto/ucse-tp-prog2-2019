@@ -13,18 +13,24 @@ namespace ImplementacionService
         {
             Principal.Instance.CrearSalas();
         }
+        
+        //DEJO UNA FORMA MEJOR DE VALIDAR EL ROL, PARA NO DUPLICAR TANTAS VECES LO MISMO
+        //SI LA LOGICA DE VALIDACION DE ROL CAMBIARA, POR EJEMPLO AGREGANDO OTRA CONDICION ADEMAS DEL ROL, TENDRIAN QUE TOCAR 
+        //TODOS LOS METODOS, CON MI FORMA, SOLO TOCAN EL METODO "VALIDAR"
+        private Resultado Validar(Roles rolNecesario, UsuarioLogueado usuario)
+        {
+            var resultado = new Resultado();
+            if (rolNecesario != usuario.RolSeleccionado)
+                resultado.Errores.Add("Error de rol");
+
+            return resultado;
+        }
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            Resultado Controlador = new Resultado();
+            Resultado Controlador = Validar(Roles.Directora, usuarioLogueado);            
 
-            if (usuarioLogueado.RolSeleccionado != Roles.Directora)
-            {
-                Controlador.Errores.Add("No tiene permisos para dar de alta una Directora");
-                return Controlador;
-            }
-
-            return Principal.Instance.AltaDirectora(directora);
+            return !Controlador.EsValido ? Controlador :  Principal.Instance.AltaDirectora(directora);
         }
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
